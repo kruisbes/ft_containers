@@ -70,6 +70,9 @@ namespace ft
 		iterator operator-(const difference_type & a) {
 			return this->ptr - a;
 		}
+		difference_type operator-(const iterator &b) {
+			return this->ptr - b.ptr;
+		}
 		iterator & operator+=(const difference_type & a) {
 			return this->ptr += a;
 		}

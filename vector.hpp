@@ -27,56 +27,58 @@ namespace ft {
 
 		// CONSTRUCTORS + DESTRUCTOR
 
-		vector() : _first(0), _last(0), _end(0), _size(0), _capacity(0) {
-			_first = _allocator.allocate(0);
-		}
+		vector() : _vec(0), _size(0), _capacity(0), _allocator(allocator_type()) {}
 
-		explicit vector(const Allocator & al)  : _first(0), _last(0), _end(0), _size(0), _capacity(0), _allocator(al) {
-			_first = _allocator.allocate(0);
-		}
+		explicit vector(const Allocator & al)  : _vec(0), _size(0), _capacity(0), _allocator(al) {}
 
 		explicit vector(size_type n) : _size(n), _capacity(n) {
-			_first = _allocator.allocate(n, (void*)0);
-			_last = _first;
-			_end = _first + n;
-			pointer tmp = _first;
-			for (size_type i = 0; i < n; i++, tmp++) {
-				_allocator.construct(tmp, T());
+			_vec = _allocator.allocate(n, (void*)0);
+			for (size_type i = 0; i < n; i++) {
+				_allocator.construct(_vec + i, T());
 			}
 		}
 
-		vector(size_type n, const T & val) : _size(n), _capacity(n) {
-			_first = _allocator.allocate(n, (void*)0);
-			_last = _first;
-			_end = _first + n;
-			pointer tmp = _first;
-			for (size_type i = 0; i < n; i++, tmp++) {
-				_allocator.construct(tmp, val);
+		vector(size_type n, const T & val) : _size(n), _capacity(n), _allocator(allocator_type()) {
+			_vec = _allocator.allocate(n, (void*)0);
+			for (size_type i = 0; i < n; i++) {
+				_allocator.construct(_vec + i, val);
 			}
 		}
 
 		vector(size_type n, const T & val, const Allocator & al) : _size(n), _capacity(n), _allocator(al) {
-			_first = _allocator.allocate(n, (void*)0);
-			_last = _first;
-			_end = _first + n;
-			pointer tmp = _first;
+			_vec = _allocator.allocate(n, (void*)0);
+			pointer tmp = _vec;
 			for (size_type i = 0; i < n; i++, tmp++) {
 				_allocator.construct(tmp, val);
 			}
 		}
 
 		template<class It>
-		vector(It first, typename enable_if<!is_integral<It>::value>::type last, const Allocator & al = allocator_type()) {
+		vector(It first, typename enable_if<!is_integral<It>::value, It>::type last, const Allocator & al = allocator_type()) : _allocator(al) {
+			difference_type dist = std::distance(first, last);
+			_vec = _allocator.allocate(dist);
+			_size = dist;
+			_capacity = dist;
+			for (size_type i = 0; dist > 0; i++, dist--) {
+				_allocator.construct(_vec + i, *(first + i));
+			}
+		}
 
+		vector(const vector & other) : _allocator(other._allocator){
+			_size = other.size();
+			_capacity = other.capacity();
+			_vec = _allocator.allocate(_capacity);
+			for (size_type i = 0; i < _size; i++)
+				_allocator.construct(_vec + i, *(other._vec + i));
 		}
 
 		~vector() {
-			if (_first != 0) {
-				for (; _first != _last; ++_first)
-					_allocator.destroy(_first); // std::allocator<T>::destroy calls the destructor of the object pointed by p
-				_allocator.deallocate(_first, _capacity);
+			if (_vec != 0) {
+				for (size_type i = 0; _vec + i != _vec + _size; i++)
+					_allocator.destroy(_vec + i);
+				_allocator.deallocate(_vec, _capacity);
 			}
-			_first = 0, _last = 0, _end = 0, _size = 0, _capacity = 0;
+			_vec = 0, _size = 0, _capacity = 0;
 		}
 
 		// MEMBER FUNCTIONS
@@ -105,34 +107,45 @@ namespace ft {
 			return *(end() - 1);
 		}
 		iterator begin() {
-			return iterator(_first);
+			return iterator(_vec);
 		}
 		const_iterator begin() const {
-			return const_iterator(_first);
+			return const_iterator(_vec);
 		}
 		size_type capacity() const {
-			return (_first == 0 ? 0 : _end - _first);
+			return _capacity;
 		}
 		void clear() {
-			if (_first != 0)
-			{
-				for (; _first != _last; ++_first)
-					_allocator.destroy(_first);
-				_allocator.deallocate(_first, _end - _first);
+			if (_vec != 0) {
+				for (size_type i = 0; _vec + i != _vec + _size; i++)
+					_allocator.destroy(_vec + i);
 			}
-			_first = 0, _last = 0, _end = 0, _size = 0;
+			_vec = 0, _size = 0;
 		}
 		bool empty() const {
 			return size() == 0;
 		}
 		iterator end() {
-			return iterator(_last);
+			return iterator(_vec + _size);
 		}
 		const_iterator end() const {
-			return const_iterator(_last);
+			return const_iterator(_vec + _size);
 		}
 		iterator erase(iterator position) {
-
+			pointer temp_arr = _allocator.allocate(_size);
+			for (size_type i = 0; i < _size; i++) {
+				_allocator.construct(temp_arr + i, *(_vec + i));
+				_allocator.destroy(_vec + i);
+			}
+			difference_type pos = std::distance(begin(), position);
+			for (size_type i = 0; i < _size; ++i) {
+				if (i == pos)
+					continue;
+				_allocator.construct(_vec + i, *(temp_arr + i));
+			}
+			_allocator.deallocate(temp_arr, _size);
+			_size--;
+			return _vec;
 		}
 		iterator erase(iterator first, iterator last) {
 
@@ -159,33 +172,43 @@ namespace ft {
 		size_type max_size() const {
 			return _allocator.max_size();
 		}
-		vector & operator=(const vector & x) {
-
+		vector & operator=(const vector & other) {
+			if (_vec != 0) {
+				this->clear();
+			}
+			if (this != other)
+			{
+				_size = other.size();
+				_capacity = other.capacity();
+				_vec = _allocator.allocate(_capacity);
+				for (size_type i = 0; i < _size; i++)
+					_allocator.construct(_vec + i, *(other._vec + i));
+			}
+			return *this;
 		}
 		reference operator[](size_type n) {
-			return _first[n];
+			return _vec[n];
 		}
 		const_reference operator[](size_type n) const {
-			return _first[n];
+			return _vec[n];
 		}
 		void pop_back() {
 			erase(end() - 1);
 		}
 		void push_back(const T & val) {
 			_size++;
-			// huh ?
 		}
 		reverse_iterator rbegin() {
-			return reverse_iterator(_end);
+			return reverse_iterator(_vec + _size);
 		}
 		const_reverse_iterator rbegin() const {
-			return const_reverse_iterator(_end);
+			return const_reverse_iterator(_vec + _size);
 		}
 		reverse_iterator rend() {
-			return reverse_iterator(_first);
+			return reverse_iterator(_vec);
 		}
 		const_reverse_iterator rend() const {
-			return const_reverse_iterator(_first);
+			return const_reverse_iterator(_vec);
 		}
 		void reserve(size_type new_cap) {
 
@@ -194,22 +217,12 @@ namespace ft {
 
 		}
 		size_type size() const {
-			return _first == 0 ? 0 : _last - _first;
+			return _size;
 		}
 		void swap(vector & x) {
-			if (_allocator == x._allocator) {
-				std::swap(_first, x._first);
-				std::swap(_last, x._last);
-				std::swap(_end, x._end);
-			}
-			else {
-				vector temp = *this;
-				*this = x;
-				x = temp;
-			}
 		}
 	private:
-		pointer _first, _last, _end;
+		pointer _vec;
 		size_type _size, _capacity;
 		allocator_type _allocator;
 	};

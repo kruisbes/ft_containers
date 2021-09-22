@@ -88,7 +88,6 @@ namespace ft {
 		const static bool value = true;
 	};
 
-
 	template <typename T>
 	struct is_integral {
 		const static bool value = is_integral_base<typename remove_const<T>::type>::value;
@@ -102,7 +101,6 @@ namespace ft {
 	struct enable_if<true, T> {
 		typedef T type;
 	};
-
 }
 
 #endif
