@@ -84,7 +84,7 @@ namespace ft {
 		// MEMBER FUNCTIONS
 
 		template<typename InputIterator>
-		void assign(InputIterator first, typename enable_if<!is_integral<InputIterator>::value>::type last) {
+		void assign(InputIterator first,  typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
 			for (size_type i = 0; i < _size; i++)
 				_allocator.destroy(_vec + i);
 			size_type new_cap = std::distance(first, last);
@@ -94,27 +94,21 @@ namespace ft {
 				_allocator.allocate(_capacity);
 			}
 			_size = new_cap;
-			for (size_type i = 0; i < _size; ++i, first++)
-				_allocator.construct(_vec + i, *first);
+			for (size_type i = 0; i < _size; ++i)
+				_allocator.construct(_vec + i, *(first++));
 		}
 		void assign(size_type n, const T & val) {
-			if (n > _capacity) {
-				for (size_type i = 0; i < _size; i++)
-					_allocator.destroy(_vec + i);
-				_allocator.deallocate(_vec, _capacity);
-				_capacity = n;
-				_size = n;
-				_allocator.allocate(_capacity);
-				for (size_type i = 0; i < n; ++i)
-					_allocator.construct(_vec + i, val);
-			}
-			else {
-				for (size_type i = 0; i < _size; i++)
-					_allocator.destroy(_vec + i);
-				_size = n;
-				for (size_type i = 0; i < n; ++i)
-					_allocator.construct(_vec + i, val);
-			}
+            for (size_type i = 0; i < _size; ++i)
+                _allocator.destroy(_vec + i);
+            if (n > _capacity) {
+                _allocator.deallocate(_vec, _capacity);
+                _capacity = n;
+                _allocator.allocate(_capacity);
+            }
+            _size = n;
+            for (size_type i = 0; i < n; ++i) {
+                _allocator.construct(_vec + i, val);
+            }
 		}
 		reference at(size_type n) {
 			if (size() <= n)
@@ -239,22 +233,51 @@ namespace ft {
 			}
 			_size += n;
 			if (_size > _capacity) {
-				
 				_allocator.deallocate(_vec, _capacity);
-				_capacity = _size;
+				_capacity *= 2;
+				if (_size > _capacity)
+				    _capacity = _size;
 				_allocator.allocate(_capacity);
 			}
-			for (size_type i = 0; i < pos; ++i)
+			size_type stop = 0;
+			for (size_type i = 0; i < pos; ++i, ++stop)
 				_allocator.construct(_vec + i, *(temp_arr + i));
 			for (size_type i = 0; i < n; ++pos, ++i)
 				_allocator.construct(_vec + pos, val);
-			for (; pos < _size; ++pos)
-				_allocator.construct(_vec + pos, *(temp_arr + pos));
+			for (; pos < _size; ++pos, ++stop)
+				_allocator.construct(_vec + pos, *(temp_arr + stop));
+			_allocator.deallocate(temp_arr, _size - n);
 		}
-//		template<class InputIterator>
-//		void insert(iterator position, InputIterator first, InputIterator last) {
-//
-//		}
+		template<class InputIterator>
+		        void insert(InputIterator position,
+                            typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type first,
+                            typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
+		    size_type dist = std::distance(first, last);
+		    pointer temp_arr = _allocator.allocate(_size);
+		    for (size_type i = 0; i < _size; ++i) {
+		        _allocator.construct(temp_arr + i, *(_vec + i));
+		        _allocator.destroy(_vec + i);
+		    }
+		    _size += dist;
+		    if (_size > _capacity) {
+		        _allocator.deallocate(_vec, _capacity);
+		        _capacity *= 2;
+		        if (_size > _capacity)
+		            _capacity = _size;
+		        _allocator.allocate(_capacity);
+		    }
+		    size_type pos = std::distance(begin(), position);
+		    size_type i, j = 0;
+            for (i = 0; i < pos; ++i, ++j) {
+                _allocator.construct(_vec + i, *(temp_arr + i));
+            }
+            for (; first != last; first++, i++)
+                _allocator.construct(_vec + i, *first);
+            for (; i < _size ; ++i, ++j) {
+                _allocator.construct(_vec + i, *(temp_arr + j));
+            }
+            _allocator.deallocate(temp_arr, _size);
+		}
 		size_type max_size() const {
 			return _allocator.max_size();
 		}
@@ -314,10 +337,54 @@ namespace ft {
 			return const_reverse_iterator(_vec);
 		}
 		void reserve(size_type new_cap) {
-
+		    if (max_size() < new_cap)
+                throw std::length_error("vector<T>");
+		    else if (capacity() < new_cap) {
+		        pointer temp_arr = _allocator.allocate(new_cap);
+                for (size_type i = 0; i < _size; i++) {
+                    _allocator.construct(temp_arr + i, *(_vec + i));
+                    _allocator.destroy(_vec + i);
+                }
+                _allocator.deallocate(_vec, _capacity);
+                _capacity = new_cap;
+                _vec = _allocator.allocate(_capacity);
+                for (size_type i = 0; i < _size; ++i)
+                    _allocator.construct(_vec + i, *(temp_arr + i));
+                _allocator.deallocate(temp_arr, new_cap);
+		    }
 		}
 		void resize(size_type n, T val = value_type()) {
-
+		    if (_size > n) {
+                for (size_type i = n; i < _size; ++i)
+                    _allocator.destroy(_vec + i);
+                _size = n;
+		    }
+		    else if (_size < n) {
+		        if (_capacity < n) {
+		            pointer temp_arr = _allocator.allocate(_size);
+		            for (size_type i = 0; i < _size; ++i) {
+		                _allocator.construct(temp_arr + i, *(_vec + i));
+		                _allocator.destroy(_vec + i);
+		            }
+		            _allocator.deallocate(_vec, _capacity);
+		            _capacity *= 2;
+		            if (capacity() < n)
+		                _capacity = n;
+		            _vec = _allocator.allocate(_capacity);
+		            size_type i;
+                    for (i = 0; i < _size; ++i)
+                        _allocator.construct(_vec + i, *(temp_arr + i));
+                    for (; i < n; ++i)
+                        _allocator.construct(_vec + i, val);
+                    _size = n;
+                    _allocator.deallocate(temp_arr, _size);
+		        }
+		        else {
+                    for (size_type i = _size; i < n; ++i)
+                        _allocator.construct(_vec + i, val);
+                    _size = n;
+		        }
+		    }
 		}
 		size_type size() const {
 			return _size;

@@ -1,80 +1,90 @@
 #include "vector.hpp"
 #include <vector>
 #include <iostream>
-#include <map>
-
 
 int main() {
-//	ft::vector<char> a;
-//	ft::vector<char> b(5);
-//	ft::vector<char> c(5, 10);
-//	ft::vector<char> d(5, 10, std::allocator<char>());
-//	ft::vector<char> e(c.begin(), c.end());
-//	int i = 0;
-//	ft::vector<char>::iterator start = e.begin();
-//	ft::vector<char>::iterator end = e.end();
-//	while (start != end)
-//	{
-//		i++;
-//		std::cout << i << std::endl;
-//		start++;
-//	}
-//	std::cout << "===================" << std::endl;
-//	bool hi = e.begin() == e.end();
-//	std::cout << hi << std::endl;
-//	ft::vector<char>::const_iterator cbeginn = e.begin();
-//	hi = cbeginn == e.begin();
-//	std::cout << hi << std::endl;
-//
-//
-//	ft::vector<int> r(5, 10);
-//	ft::vector<int> rr(5, 10);
-//	std::cout << r.size() << " " << r.capacity() << std::endl;
-//	std::cout << rr.size() << " " << rr.capacity() << std::endl;
-//	r.clear();
-//	rr.clear();
-//	std::cout << r.size() << " " << r.capacity() << std::endl;
-//	std::cout << rr.size() << " " << rr.capacity() << std::endl;
-//
+    std::vector<int> a(5,10);
+    std::vector<int> c(2, 7);
+    ft::vector<int> b(5, 10);
+    ft::vector<int> d(2, 7);
 
-	ft::vector<int> a(5, 10);
-	std::vector<int> b(5, 10);
-	b.erase(b.begin() + 1, b.begin() + 3);
-	a.erase(a.begin() + 1, a.begin() + 3);
-	std::cout << b.size() << " " << b.capacity() << std::endl;
-	std::cout << a.size() << " " << a.capacity() << std::endl;
-	std::vector<int>::iterator std_begin = b.begin();
-	std::vector<int>::iterator std_end = b.end();
-	while (std_begin != std_end){
-		std::cout << *std_begin << " ";
-		std_begin++;
-	}
-	std::cout << std::endl;
-	ft::vector<int>::iterator ft_begin = a.begin();
-	ft::vector<int>::iterator ft_end = a.end();
-	while (ft_begin != ft_end){
-		std::cout << *ft_begin << " ";
-		ft_begin++;
-	}
-	std::cout << std::endl;
-	std::cout << b[0] << " " << b[1] << " " << b[2] << " " << b[3] << " " << b[4] << std::endl;
-	std::cout << a[0] << " " << a[1] << " " << a[2] << " " << a[3] << " " << a[4] << std::endl;
+    a.assign(c.begin(), c.end());
+    b.assign(d.begin(), d.end());
 
-	b.push_back(5);
-	a.push_back(5);
-	b.push_back(3);
-	a.push_back(3);
-//	b.push_back(4);
-//	a.push_back(4);
-	b.insert(b.begin() + 2, 11);
-	a.insert(a.begin() + 2, 11);
-	b.assign(12, 10);
-	a.assign(12, 10);
-	b.insert(b.begin() + 2, 4, 17);
-	a.insert(a.begin() + 2, 4, 17);
-	std::cout << "std: " << b.size() << " " << b.capacity() << std::endl;
-	std::cout << "ft: " << a.size() << " " << a.capacity() << std::endl;
-	std::cout << "std: " << b[0] << " " << b[1] << " " << b[2] << " " << b[3] << " " << b[4] << " " << b[5] << std::endl;
-	std::cout << "ft: " << a[0] << " " << a[1] << " " << a[2] << " " << a[3] << " " << a[4] << " " << a[5] <<std::endl;
+    a.push_back(5);
+    a.push_back(6);
+    a.push_back(7);
+    a.push_back(7);
+    a.push_back(8);
+    a.push_back(9);
+    a.push_back(10);
+    a.push_back(11);
+    a.push_back(12);
 
+    b.push_back(5);
+    b.push_back(6);
+    b.push_back(7);
+    b.push_back(7);
+    b.push_back(8);
+    b.push_back(9);
+    b.push_back(10);
+    b.push_back(11);
+    b.push_back(12);
+
+    a.insert(a.begin() + 5, 6, 90);
+    b.insert(b.begin() + 5, 6, 90);
+
+    a.insert(a.begin() + 10, 789);
+    b.insert(b.begin() + 10, 789);
+    a.insert(a.begin() + 10, 789);
+    b.insert(b.begin() + 10, 789);
+    a.insert(a.begin() + 10, 789);
+    b.insert(b.begin() + 10, 789);
+    a.insert(a.begin() + 10, 789);
+    b.insert(b.begin() + 10, 789);
+
+
+    std::vector<int> e(5, 10);
+    ft::vector<int> f(5, 10);
+
+    a.insert(a.begin() + 2, e.begin(), e.end());
+    b.insert(b.begin() + 2, f.begin(), f.end());
+
+    a.insert(a.end(), 5);
+    b.insert(b.end(), 5);
+
+    a.insert(a.end(), 5, 10);
+    b.insert(b.end(), 5, 10);
+
+    a.reserve(70);
+    b.reserve(70);
+    a.reserve(50);
+    b.reserve(50);
+
+    a.resize(10, 5);
+    b.resize(10, 5);
+
+    a.resize(60, 60);
+    b.resize(60, 60);
+
+    a.resize(80, 60);
+    b.resize(80, 60);
+
+
+    std::vector<int>::iterator ita = a.begin();
+    std::vector<int>::iterator itae = a.end();
+    std::cout << "| std | -> size: " << a.size() << " capacity: " << a.capacity() << std::endl;
+    while (ita != itae) {
+        std::cout << *ita << " ";
+        ita++;
+    }
+    std::cout << std::endl;
+    ft::vector<int>::iterator itb = b.begin();
+    ft::vector<int>::iterator itbe = b.end();
+    std::cout << "| ft | -> size:  " << b.size() << " capacity: " << b.capacity() << std::endl;
+    while (itb != itbe) {
+        std::cout << *itb << " ";
+        itb++;
+    }
+    std::cout << std::endl;
 }

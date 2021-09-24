@@ -51,10 +51,10 @@ namespace ft {
 	struct is_integral_base<unsigned char> {
 		const static bool value = true;
 	};
-	template<>
-	struct is_integral_base<char16_t> {
-		const static bool value = true;
-	};
+//	template<>
+//	struct is_integral_base<char16_t> {
+//		const static bool value = true;
+//	};
 	template<>
 	struct is_integral_base<wchar_t> {
 		const static bool value = true;
