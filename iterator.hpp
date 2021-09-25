@@ -6,6 +6,7 @@
 
 namespace ft
 {
+	template <typename T> class const_iterator;
 	template <typename T> class iterator
 	{
 	public:
@@ -20,6 +21,9 @@ namespace ft
 		iterator(const iterator & rhs) {
 			*this = rhs;
 		}
+//		iterator(const const_iterator<T> & rhs) {
+//			*this = rhs;
+//		}
 		iterator(pointer rhs)
 		{
 			this->ptr = rhs;
@@ -29,22 +33,41 @@ namespace ft
 			this->ptr = rhs.ptr;
 			return *this;
 		}
-		bool operator==(const iterator & rhs) {
+
+		bool operator==(const iterator & rhs) const {
 			return this->ptr == rhs.ptr;
 		}
-		bool operator!=(const iterator & rhs) {
+		bool operator==(const const_iterator<T> & rhs) const {
+			return this->ptr == rhs.ptr;
+		}
+		bool operator!=(const iterator & rhs) const {
+			return this->ptr != rhs.ptr;
+		}
+		bool operator!=(const const_iterator<T> & rhs) const {
 			return this->ptr != rhs.ptr;
 		}
 		bool operator<(const iterator & rhs) {
 			return this->ptr < rhs.ptr;
 		}
+		bool operator<(const const_iterator<T> & rhs){
+			return this->ptr < rhs.ptr;
+		}
 		bool operator<=(const iterator & rhs) {
+			return this->ptr <= rhs.ptr;
+		}
+		bool operator<=(const const_iterator<T> & rhs){
 			return this->ptr <= rhs.ptr;
 		}
 		bool operator>(const iterator & rhs) {
 			return this->ptr > rhs.ptr;
 		}
+		bool operator>(const const_iterator<T> & rhs){
+			return this->ptr > rhs.ptr;
+		}
 		bool operator>=(const iterator & rhs) {
+			return this->ptr >= rhs.ptr;
+		}
+		bool operator>=(const const_iterator<T> & rhs){
 			return this->ptr >= rhs.ptr;
 		}
 		iterator & operator++() {
@@ -68,18 +91,28 @@ namespace ft
 		iterator operator+(const difference_type & a) {
 			return this->ptr + a;
 		}
+		template<typename It>
+		friend It operator+(const difference_type & a, const It & iter) {
+			return iter.ptr + a;
+		}
 		iterator operator-(const difference_type & a) {
 			return this->ptr - a;
 		}
 		difference_type operator-(const iterator &b) {
 			return this->ptr - b.ptr;
 		}
+		difference_type operator-(const const_iterator<T> &b) {
+			return this->ptr - b.ptr;
+		}
 		iterator & operator+=(const difference_type & a) {
-			return this->ptr += a;
+			this->ptr += a;
+			return *this;
 		}
 		iterator & operator-=(const difference_type & a) {
-			return this->ptr -= a;
+			this->ptr -= a;
+			return *this;
 		}
+
 		pointer operator->()
 		{
 			return this->ptr;
@@ -87,8 +120,8 @@ namespace ft
 		value_type & operator*() {
 			return *ptr;
 		}
-		iterator & operator[](difference_type n) const {
-			return (*(*this + n));
+		reference operator[](difference_type n) const {
+			return (*(this->ptr + n));
 		}
 	};
 	template <typename T> class const_iterator
@@ -164,10 +197,12 @@ namespace ft
 			return this->ptr - a;
 		}
 		const_iterator & operator+=(const difference_type & a) {
-			return this->ptr += a;
+			this->ptr += a;
+			return *this;
 		}
 		const_iterator & operator-=(const difference_type & a) {
-			return this->ptr -= a;
+			this->ptr -= a;
+			return *this;
 		}
 		pointer operator->()
 		{
@@ -176,10 +211,11 @@ namespace ft
 		value_type & operator*() {
 			return *ptr;
 		}
-		const_iterator & operator[](difference_type n) const {
-			return (*(*this + n));
+		reference operator[](difference_type n) const {
+			return (*(this->ptr + n));
 		}
 	};
+
 	template <typename T> class reverse_iterator {
 	public:
 		typedef T value_type;
@@ -255,8 +291,8 @@ namespace ft
 		value_type & operator*() {
 			return *ptr;
 		}
-		reverse_iterator & operator[](difference_type n) const {
-			return (*(this + n));
+		reference operator[](difference_type n) const {
+			return (*(this->ptr + n));
 		}
 	};
 	template <typename T> class const_reverse_iterator {

@@ -54,7 +54,7 @@ namespace ft {
 		}
 
 		template<class It>
-		vector(It first, typename enable_if<!is_integral<It>::value, It>::type last, const Allocator & al = allocator_type()) : _allocator(al) {
+		vector(It first, typename ft::enable_if<!ft::is_integral<It>::value, It>::type last, const Allocator & al = allocator_type()) : _allocator(al) {
 			difference_type dist = std::distance(first, last);
 			_vec = _allocator.allocate(dist);
 			_size = dist;
@@ -85,8 +85,7 @@ namespace ft {
 
 		template<typename InputIterator>
 		void assign(InputIterator first,  typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
-			for (size_type i = 0; i < _size; i++)
-				_allocator.destroy(_vec + i);
+			clear();
 			size_type new_cap = std::distance(first, last);
 			if (new_cap > _capacity) {
 				_allocator.deallocate(_vec, _capacity);
@@ -98,8 +97,7 @@ namespace ft {
 				_allocator.construct(_vec + i, *(first++));
 		}
 		void assign(size_type n, const T & val) {
-            for (size_type i = 0; i < _size; ++i)
-                _allocator.destroy(_vec + i);
+			clear();
             if (n > _capacity) {
                 _allocator.deallocate(_vec, _capacity);
                 _capacity = n;
@@ -112,13 +110,13 @@ namespace ft {
 		}
 		reference at(size_type n) {
 			if (size() <= n)
-				throw std::out_of_range("vector<T>");
-			return (*begin() + n);
+				throw std::out_of_range("vector");
+			return (*(begin() + n));
 		}
 		const_reference at(size_type n) const {
 			if (size() <= n)
-				throw std::out_of_range("vector<T>");
-			return (*begin() + n);
+				throw std::out_of_range("vector");
+			return (*(begin() + n));
 		}
 		reference back() {
 			return *(end() - 1);
@@ -140,7 +138,7 @@ namespace ft {
 				for (size_type i = 0; _vec + i != _vec + _size; i++)
 					_allocator.destroy(_vec + i);
 			}
-			_vec = 0, _size = 0;
+			_size = 0;
 		}
 		bool empty() const {
 			return size() == 0;
@@ -225,8 +223,6 @@ namespace ft {
 			return _vec;
 		}
 		void insert(iterator position, size_type n, const T & val) {
-			if (n == 70)
-				std::cout << "haha" << std::endl;
 			size_type pos = std::distance(begin(), position);
 			pointer temp_arr = _allocator.allocate(_size);
 			for (size_type i = 0; i < _size; ++i) {
@@ -392,6 +388,10 @@ namespace ft {
 			return _size;
 		}
 		void swap(vector & x) {
+			(void)x;
+			std::swap(_vec, x._vec);
+			std::swap(_size, x._size);
+			std::swap(_capacity, x._capacity);
 		}
 	private:
 		pointer _vec;
