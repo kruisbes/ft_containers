@@ -304,6 +304,10 @@ namespace ft {
 		}
 		void push_back(const T & val) {
 			_size++;
+			if (_capacity == 0) {
+			    _capacity = 1;
+			    _vec = _allocator.allocate(_capacity);
+			}
 			if (_size > _capacity) {
 				pointer temp_arr = _allocator.allocate(_size);
 				for (size_type i = 0; i < _size; i++) {
