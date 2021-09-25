@@ -91,7 +91,7 @@ namespace ft {
 			if (new_cap > _capacity) {
 				_allocator.deallocate(_vec, _capacity);
 				_capacity = new_cap;
-				_allocator.allocate(_capacity);
+				_vec = _allocator.allocate(_capacity);
 			}
 			_size = new_cap;
 			for (size_type i = 0; i < _size; ++i)
@@ -103,7 +103,7 @@ namespace ft {
             if (n > _capacity) {
                 _allocator.deallocate(_vec, _capacity);
                 _capacity = n;
-                _allocator.allocate(_capacity);
+                _vec = _allocator.allocate(_capacity);
             }
             _size = n;
             for (size_type i = 0; i < n; ++i) {
@@ -225,6 +225,8 @@ namespace ft {
 			return _vec;
 		}
 		void insert(iterator position, size_type n, const T & val) {
+			if (n == 70)
+				std::cout << "haha" << std::endl;
 			size_type pos = std::distance(begin(), position);
 			pointer temp_arr = _allocator.allocate(_size);
 			for (size_type i = 0; i < _size; ++i) {
@@ -237,7 +239,7 @@ namespace ft {
 				_capacity *= 2;
 				if (_size > _capacity)
 				    _capacity = _size;
-				_allocator.allocate(_capacity);
+				_vec = _allocator.allocate(_capacity);
 			}
 			size_type stop = 0;
 			for (size_type i = 0; i < pos; ++i, ++stop)
@@ -264,7 +266,7 @@ namespace ft {
 		        _capacity *= 2;
 		        if (_size > _capacity)
 		            _capacity = _size;
-		        _allocator.allocate(_capacity);
+		        _vec = _allocator.allocate(_capacity);
 		    }
 		    size_type pos = std::distance(begin(), position);
 		    size_type i, j = 0;

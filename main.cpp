@@ -4,12 +4,12 @@
 
 int main() {
     std::vector<int> a(5,10);
-    std::vector<int> c(2, 7);
+//    std::vector<int> c(2, 7);
     ft::vector<int> b(5, 10);
-    ft::vector<int> d(2, 7);
+//    ft::vector<int> d(2, 7);
 
-    a.assign(c.begin(), c.end());
-    b.assign(d.begin(), d.end());
+//    a.assign(c.begin(), c.end());
+//    b.assign(d.begin(), d.end());
 
     a.push_back(5);
     a.push_back(6);
@@ -44,11 +44,11 @@ int main() {
     b.insert(b.begin() + 10, 789);
 
 
-    std::vector<int> e(5, 10);
-    ft::vector<int> f(5, 10);
+//    std::vector<int> e(5, 10);
+//    ft::vector<int> f(5, 10);
 
-    a.insert(a.begin() + 2, e.begin(), e.end());
-    b.insert(b.begin() + 2, f.begin(), f.end());
+//    a.insert(a.begin() + 2, e.begin(), e.end());
+//    b.insert(b.begin() + 2, f.begin(), f.end());
 
     a.insert(a.end(), 5);
     b.insert(b.end(), 5);
@@ -69,6 +69,9 @@ int main() {
 
     a.resize(80, 60);
     b.resize(80, 60);
+
+	a.insert(a.end(), 70, 70);
+	b.insert(b.end(), 70, 70);
 
 
     std::vector<int>::iterator ita = a.begin();
