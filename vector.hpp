@@ -153,43 +153,27 @@ namespace ft {
 			if (position == end() - 1) {
 				_allocator.destroy(_vec + _size);
 				_size--;
-				return _vec;
+				return position;
 			}
-			pointer temp_arr = _allocator.allocate(_size);
-			for (size_type i = 0; i < _size; i++) {
-				_allocator.construct(temp_arr + i, *(_vec + i));
-				_allocator.destroy(_vec + i);
+			size_type pos = std::distance(begin(), position);
+			_allocator.destroy(_vec + pos);
+			for (size_type i = pos; i < _size; ++i) {
+				_allocator.construct(_vec + i, *(_vec + i + 1));
 			}
-			size_type j = 0;
-			difference_type pos = std::distance(begin(), position);
-			for (size_type i = 0; i < _size; ++i) {
-				if (i == pos)
-					continue;
-				_allocator.construct(_vec + j, *(temp_arr + i));
-				j++;
-			}
-			_allocator.deallocate(temp_arr, _size);
 			_size--;
-			return _vec;
+			return position;
 		}
 		iterator erase(iterator first, iterator last) {
-			pointer temp_arr = _allocator.allocate(_size);
-			for (size_type i = 0; i < _size; i++) {
-				_allocator.construct(temp_arr + i, *(_vec + i));
-				_allocator.destroy(_vec + i);
-			}
 			size_type posf = std::distance(begin(), first);
 			size_type posl = std::distance(begin(), last);
-			size_type del = posl - posf;
-			size_type j = 0;
-			for (size_type i = 0; i < _size; ++i) {
-				if (i >= posf && i <= posl)
-					continue;
-				_allocator.construct(_vec + j, *(temp_arr + i));
-				j++;
+			size_type len = std::distance(begin(), end());
+			_size -= (posl - posf);
+			for (size_type i = posf; i < posl; ++i) {
+				_allocator.destroy(_vec + i);
 			}
-			_size -= del;
-			_allocator.deallocate(temp_arr, _size);
+			for (size_type i = posl; i < len; ++i) {
+				_allocator.construct(_vec + posf++, *(_vec + i));
+			}
 			return _vec;
 		}
 		reference front() {
@@ -200,81 +184,6 @@ namespace ft {
 		}
 		allocator_type get_allocator() const {
 			return _allocator;
-		}
-		iterator insert(iterator position, const T & val) {
-			_size++;
-			pointer temp_arr = _allocator.allocate(_size);
-			for (size_type i = 0; i < _size; i++) {
-				_allocator.construct(temp_arr + i, *(_vec + i));
-				_allocator.destroy(_vec + i);
-			}
-			size_type pos = std::distance(begin(), position);
-			if (_size > _capacity) {
-				_allocator.deallocate(_vec, _capacity);
-				_capacity *= 2;
-				_vec = _allocator.allocate(_capacity);
-			}
-			for (size_type i = 0; i < pos; ++i)
-				_allocator.construct(_vec + i, *(temp_arr + i));
-			_allocator.construct(_vec + pos, val);
-			for (; pos + 1 < _size; ++pos)
-				_allocator.construct(_vec + pos + 1, *(temp_arr + pos));
-			_allocator.deallocate(temp_arr, _size);
-			return _vec;
-		}
-		void insert(iterator position, size_type n, const T & val) {
-			size_type pos = std::distance(begin(), position);
-			pointer temp_arr = _allocator.allocate(_size);
-			for (size_type i = 0; i < _size; ++i) {
-				_allocator.construct(temp_arr + i, *(_vec + i));
-				_allocator.destroy(_vec + i);
-			}
-			_size += n;
-			if (_size > _capacity) {
-				_allocator.deallocate(_vec, _capacity);
-				_capacity *= 2;
-				if (_size > _capacity)
-				    _capacity = _size;
-				_vec = _allocator.allocate(_capacity);
-			}
-			size_type stop = 0;
-			for (size_type i = 0; i < pos; ++i, ++stop)
-				_allocator.construct(_vec + i, *(temp_arr + i));
-			for (size_type i = 0; i < n; ++pos, ++i)
-				_allocator.construct(_vec + pos, val);
-			for (; pos < _size; ++pos, ++stop)
-				_allocator.construct(_vec + pos, *(temp_arr + stop));
-			_allocator.deallocate(temp_arr, _size - n);
-		}
-		template<class InputIterator>
-		        void insert(InputIterator position,
-                            typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type first,
-                            typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
-		    size_type dist = std::distance(first, last);
-		    pointer temp_arr = _allocator.allocate(_size);
-		    for (size_type i = 0; i < _size; ++i) {
-		        _allocator.construct(temp_arr + i, *(_vec + i));
-		        _allocator.destroy(_vec + i);
-		    }
-		    _size += dist;
-		    if (_size > _capacity) {
-		        _allocator.deallocate(_vec, _capacity);
-		        _capacity *= 2;
-		        if (_size > _capacity)
-		            _capacity = _size;
-		        _vec = _allocator.allocate(_capacity);
-		    }
-		    size_type pos = std::distance(begin(), position);
-		    size_type i, j = 0;
-            for (i = 0; i < pos; ++i, ++j) {
-                _allocator.construct(_vec + i, *(temp_arr + i));
-            }
-            for (; first != last; first++, i++)
-                _allocator.construct(_vec + i, *first);
-            for (; i < _size ; ++i, ++j) {
-                _allocator.construct(_vec + i, *(temp_arr + j));
-            }
-            _allocator.deallocate(temp_arr, _size);
 		}
 		size_type max_size() const {
 			return _allocator.max_size();
