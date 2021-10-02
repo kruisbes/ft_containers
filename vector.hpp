@@ -88,7 +88,8 @@ namespace ft {
 			clear();
 			size_type new_cap = std::distance(first, last);
 			if (new_cap > _capacity) {
-				_allocator.deallocate(_vec, _capacity);
+				if (_capacity > 0)
+                    _allocator.deallocate(_vec, _capacity);
 				_capacity = new_cap;
 				_vec = _allocator.allocate(_capacity);
 			}
@@ -99,7 +100,8 @@ namespace ft {
 		void assign(size_type n, const T & val) {
 			clear();
             if (n > _capacity) {
-                _allocator.deallocate(_vec, _capacity);
+                if (_capacity > 0)
+                    _allocator.deallocate(_vec, _capacity);
                 _capacity = n;
                 _vec = _allocator.allocate(_capacity);
             }
@@ -246,6 +248,51 @@ namespace ft {
                 }
             }
         }
+        template<class InputIterator>
+        void insert(InputIterator position,
+                    typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type first,
+                    typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
+            if (std::distance(first, last) < 0)
+                throw (std::length_error("vector: range insert"));
+            size_type pos = std::distance(begin(), position);
+            size_type num = std::distance(first, last);
+            if (_size > _capacity) {
+                _size += num;
+                size_type temp_cap = _capacity;
+                _capacity = (_capacity == 0) ? 1 : _capacity * 2;
+                if (_capacity < _size)
+                    _capacity = _size;
+                pointer temp_arr = _allocator.allocate(_capacity);
+                size_type i, j = 0;
+                for (i = 0; i < pos; ++i, ++j)
+                    *(temp_arr + i) = *(_vec + i);
+                for (; first != last; first++, i++)
+                    _allocator.construct(_vec + i, *first);
+                for (; i < _size; ++i)
+                    *(temp_arr + i) = *(_vec + j);
+                _allocator.deallocate(_vec, temp_cap);
+                _vec = temp_arr;
+            }
+            else {
+                size_type cnt;
+                if (pos + num > _size) {
+                    cnt = _size - pos;
+                    _size += num;
+                    for (size_type i = _size - 1; cnt > 0; --i, --cnt)
+                        *(_vec + i) = *(_vec + i - num);
+                    for (size_type i = pos; first != last; first++, i++)
+                        _allocator.construct(_vec + i, *first);
+                }
+                else
+                {
+                    _size += num;
+                    for (size_type i = _size - 1; i > pos + num - 1; i--)
+                        *(_vec + i) = *(_vec + i - num);
+                    for (size_type i = pos; first != last; first++, i++)
+                        _allocator.construct(_vec + i, *first);
+                }
+            }
+        }
 		size_type max_size() const {
 			return _allocator.max_size();
 		}
@@ -362,7 +409,6 @@ namespace ft {
 			return _size;
 		}
 		void swap(vector & x) {
-			(void)x;
 			std::swap(_vec, x._vec);
 			std::swap(_size, x._size);
 			std::swap(_capacity, x._capacity);
