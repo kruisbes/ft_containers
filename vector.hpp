@@ -185,6 +185,67 @@ namespace ft {
 		allocator_type get_allocator() const {
 			return _allocator;
 		}
+        iterator insert (iterator position, const value_type & val) {
+            size_type pos = std::distance(begin(), position);
+            if (_size == _capacity) {
+                _capacity = (_capacity == 0) ? 1 : _capacity * 2;
+                pointer temp_arr = _allocator.allocate(_capacity);
+                for (size_type i = 0; i < pos; ++i)
+                    *(temp_arr + i) = *(_vec + i);
+                _allocator.construct(temp_arr + pos, val);
+                _size++;
+                for (size_type i = pos; i < _size; ++i)
+                    *(temp_arr + i + 1) = *(_vec + i);
+                _allocator.deallocate(_vec, _size - 1);
+                _vec = temp_arr;
+            }
+            else {
+                for (size_type i = _size; i > pos; i--)
+                    *(_vec + i) = *(_vec + i - 1);
+                _allocator.construct(_vec + pos, val);
+                _size++;
+            }
+            return position;
+        }
+        void insert(iterator position, size_type n, const value_type & val) {
+            size_type pos = std::distance(begin(), position);
+            if (_size + n > _capacity) {
+                size_type temp_cap = _capacity;
+                _capacity = (_capacity == 0) ? 1 : _capacity * 2;
+                if (_capacity < _size + n)
+                    _capacity = _size + n;
+                pointer temp_arr = _allocator.allocate(_capacity);
+                size_type i, j;
+                for (i = 0; i < pos; ++i)
+                    *(temp_arr + i) = *(_vec + i);
+                for (j = pos; j < pos + n; ++j)
+                    _allocator.construct(temp_arr + j, val);
+                for (; i < _size; ++i, ++j)
+                    *(temp_arr + j) = *(_vec + i);
+                _allocator.deallocate(_vec, temp_cap);
+                _vec = temp_arr;
+                _size += n;
+            }
+            else {
+                size_type cnt;
+                if (pos + n > _size) {
+                    cnt = _size - pos;
+                    _size += n;
+                    for (size_type i = _size - 1; cnt > 0; --i, --cnt)
+                        *(_vec + i) = *(_vec + i - n);
+                    for (size_type i = pos; i < pos + n; ++i)
+                        _allocator.construct(_vec + i, val);
+                }
+                else
+                {
+                    _size += n;
+                    for (size_type i = _size - 1; i > pos + n - 1; i--)
+                        *(_vec + i) = *(_vec + i - n);
+                    for (size_type i = pos; i < pos + n; ++i)
+                        _allocator.construct(_vec + i, val);
+                }
+            }
+        }
 		size_type max_size() const {
 			return _allocator.max_size();
 		}
