@@ -32,21 +32,21 @@ namespace ft {
 		explicit vector(const Allocator & al)  : _vec(0), _size(0), _capacity(0), _allocator(al) {}
 
 		explicit vector(size_type n) : _size(n), _capacity(n) {
-			_vec = _allocator.allocate(n, (void*)0);
+			_vec = _allocator.allocate(n);
 			for (size_type i = 0; i < n; i++) {
 				_allocator.construct(_vec + i, T());
 			}
 		}
 
 		vector(size_type n, const T & val) : _size(n), _capacity(n), _allocator(allocator_type()) {
-			_vec = _allocator.allocate(n, (void*)0);
+			_vec = _allocator.allocate(n);
 			for (size_type i = 0; i < n; i++) {
 				_allocator.construct(_vec + i, val);
 			}
 		}
 
 		vector(size_type n, const T & val, const Allocator & al) : _size(n), _capacity(n), _allocator(al) {
-			_vec = _allocator.allocate(n, (void*)0);
+			_vec = _allocator.allocate(n);
 			pointer tmp = _vec;
 			for (size_type i = 0; i < n; i++, tmp++) {
 				_allocator.construct(tmp, val);
@@ -74,8 +74,8 @@ namespace ft {
 
 		~vector() {
 			if (_vec != 0) {
-				for (size_type i = 0; _vec + i != _vec + _size; i++)
-					_allocator.destroy(_vec + i);
+//				for (size_type i = 0; i < _size; i++)
+//					_allocator.destroy(_vec + i);
 				_allocator.deallocate(_vec, _capacity);
 			}
 			_vec = 0, _size = 0, _capacity = 0;
@@ -193,17 +193,19 @@ namespace ft {
                 _capacity = (_capacity == 0) ? 1 : _capacity * 2;
                 pointer temp_arr = _allocator.allocate(_capacity);
                 for (size_type i = 0; i < pos; ++i)
-                    *(temp_arr + i) = *(_vec + i);
+                    _allocator.construct(temp_arr + i, *(_vec + i));
                 _allocator.construct(temp_arr + pos, val);
                 _size++;
-                for (size_type i = pos; i < _size; ++i)
-                    *(temp_arr + i + 1) = *(_vec + i);
+                for (size_type i = pos; i < _size - 1; ++i)
+					_allocator.construct(temp_arr + i + 1, *(_vec + i));
                 _allocator.deallocate(_vec, _size - 1);
                 _vec = temp_arr;
             }
             else {
-                for (size_type i = _size; i > pos; i--)
-                    *(_vec + i) = *(_vec + i - 1);
+                for (size_type i = _size; i > pos; i--) {
+					_allocator.construct(_vec + i, *(_vec + i - 1));
+					_allocator.destroy(_vec + i - 1);
+				}
                 _allocator.construct(_vec + pos, val);
                 _size++;
             }
@@ -219,11 +221,11 @@ namespace ft {
                 pointer temp_arr = _allocator.allocate(_capacity);
                 size_type i, j;
                 for (i = 0; i < pos; ++i)
-                    *(temp_arr + i) = *(_vec + i);
+					_allocator.construct(temp_arr + i, *(_vec + i));
                 for (j = pos; j < pos + n; ++j)
                     _allocator.construct(temp_arr + j, val);
                 for (; i < _size; ++i, ++j)
-                    *(temp_arr + j) = *(_vec + i);
+					_allocator.construct(temp_arr + j, *(_vec + i));
                 _allocator.deallocate(_vec, temp_cap);
                 _vec = temp_arr;
                 _size += n;
@@ -233,16 +235,20 @@ namespace ft {
                 if (pos + n > _size) {
                     cnt = _size - pos;
                     _size += n;
-                    for (size_type i = _size - 1; cnt > 0; --i, --cnt)
-                        *(_vec + i) = *(_vec + i - n);
+                    for (size_type i = _size - 1; cnt > 0; --i, --cnt) {
+						_allocator.construct(_vec + i, *(_vec + i - n));
+						_allocator.destroy(_vec + i - n);
+					}
                     for (size_type i = pos; i < pos + n; ++i)
                         _allocator.construct(_vec + i, val);
                 }
                 else
                 {
                     _size += n;
-                    for (size_type i = _size - 1; i > pos + n - 1; i--)
-                        *(_vec + i) = *(_vec + i - n);
+                    for (size_type i = _size - 1; i > pos + n - 1; i--) {
+						_allocator.construct(_vec + i, *(_vec + i - n));
+						_allocator.destroy(_vec + i - n);
+					}
                     for (size_type i = pos; i < pos + n; ++i)
                         _allocator.construct(_vec + i, val);
                 }
@@ -256,7 +262,7 @@ namespace ft {
                 throw (std::length_error("vector: range insert"));
             size_type pos = std::distance(begin(), position);
             size_type num = std::distance(first, last);
-            if (_size > _capacity) {
+            if (_size + num > _capacity) {
                 _size += num;
                 size_type temp_cap = _capacity;
                 _capacity = (_capacity == 0) ? 1 : _capacity * 2;
@@ -265,11 +271,11 @@ namespace ft {
                 pointer temp_arr = _allocator.allocate(_capacity);
                 size_type i, j = 0;
                 for (i = 0; i < pos; ++i, ++j)
-                    *(temp_arr + i) = *(_vec + i);
-                for (; first != last; first++, i++)
-                    _allocator.construct(_vec + i, *first);
-                for (; i < _size; ++i)
-                    *(temp_arr + i) = *(_vec + j);
+					_allocator.construct(temp_arr + i, *(_vec + i));
+				for (; first != last; first++, i++)
+                    _allocator.construct(temp_arr + i, *first);
+                for (; i < _size; ++i, ++j)
+					_allocator.construct(temp_arr + i, *(_vec + j));
                 _allocator.deallocate(_vec, temp_cap);
                 _vec = temp_arr;
             }
@@ -278,16 +284,20 @@ namespace ft {
                 if (pos + num > _size) {
                     cnt = _size - pos;
                     _size += num;
-                    for (size_type i = _size - 1; cnt > 0; --i, --cnt)
-                        *(_vec + i) = *(_vec + i - num);
+                    for (size_type i = _size - 1; cnt > 0; --i, --cnt) {
+						_allocator.construct(_vec + i, *(_vec + i - num));
+						_allocator.destroy(_vec + i - num);
+					}
                     for (size_type i = pos; first != last; first++, i++)
                         _allocator.construct(_vec + i, *first);
                 }
                 else
                 {
                     _size += num;
-                    for (size_type i = _size - 1; i > pos + num - 1; i--)
-                        *(_vec + i) = *(_vec + i - num);
+                    for (size_type i = _size - 1; i > pos + num - 1; i--) {
+						_allocator.construct(_vec + i, *(_vec + i - num));
+						_allocator.destroy(_vec + i - num);
+					}
                     for (size_type i = pos; first != last; first++, i++)
                         _allocator.construct(_vec + i, *first);
                 }
@@ -319,34 +329,29 @@ namespace ft {
 		void pop_back() {
 			erase(end() - 1);
 		}
-		void push_back(const T & val) {
-			_size++;
-			if (_capacity == 0) {
-			    _capacity = 1;
-			    _vec = _allocator.allocate(_capacity);
-			}
-			if (_size > _capacity) {
-				pointer temp_arr = _allocator.allocate(_size);
-				for (size_type i = 0; i < _size; i++) {
-					_allocator.construct(temp_arr + i, *(_vec + i));
-					_allocator.destroy(_vec + i);
-				}
-				_allocator.construct(temp_arr + _size - 1, val);
-				_allocator.deallocate(_vec, _capacity);
-				_capacity *= 2;
-				_vec = _allocator.allocate(_capacity);
-				for (size_type i = 0; i < _size; ++i)
-					_allocator.construct(_vec + i, *(temp_arr + i));
-				_allocator.deallocate(temp_arr, _size);
-			}
-			else {
-				_allocator.construct(_vec + _size - 1, val);
-			}
-		}
 		reverse_iterator rbegin() {
 			return reverse_iterator(_vec + _size);
 		}
-		const_reverse_iterator rbegin() const {
+        void push_back(const value_type & val) {
+            _size++;
+            if (_size > _capacity) {
+                size_type tempCap = _capacity;
+                _capacity = (_capacity == 0) ? 1 : _capacity * 2;
+                pointer temp_arr = _allocator.allocate(_capacity);
+                size_type i;
+                for (i = 0; i < _size - 1; ++i) {
+                    _allocator.construct(temp_arr + i, *(_vec + i));
+                    _allocator.destroy(_vec + i);
+                }
+                _allocator.construct(temp_arr + i, val);
+                if (tempCap > 0)
+                    _allocator.deallocate(_vec, tempCap);
+                _vec = temp_arr;
+            }
+            else
+                _allocator.construct(_vec + _size - 1, val);
+        }
+        const_reverse_iterator rbegin() const {
 			return const_reverse_iterator(_vec + _size);
 		}
 		reverse_iterator rend() {
