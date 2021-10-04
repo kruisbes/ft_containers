@@ -22,8 +22,8 @@ namespace ft {
 		typedef typename Allocator::const_pointer const_pointer;
 		typedef ft::iterator<T> iterator;
 		typedef ft::const_iterator<T> const_iterator;
-		typedef ft::reverse_iterator<T> reverse_iterator;
-		typedef ft::const_reverse_iterator<T> const_reverse_iterator;
+//		typedef ft::reverse_iterator<T> reverse_iterator;
+//		typedef ft::const_reverse_iterator<T> const_reverse_iterator;
 
 		// CONSTRUCTORS + DESTRUCTOR
 
@@ -312,6 +312,7 @@ namespace ft {
 			if (_vec != 0)
 				clear();
 			if (this != other) {
+				_allocator = other._allocator;
 				_allocator.deallocate(_capacity);
 				_capacity = other._capacity;
 				_size = other._size;
@@ -354,18 +355,18 @@ namespace ft {
 				_allocator.construct(_vec + _size - 1, val);
 			}
 		}
-		reverse_iterator rbegin() {
-			return reverse_iterator(_vec + _size);
-		}
-		const_reverse_iterator rbegin() const {
-			return const_reverse_iterator(_vec + _size);
-		}
-		reverse_iterator rend() {
-			return reverse_iterator(_vec);
-		}
-		const_reverse_iterator rend() const {
-			return const_reverse_iterator(_vec);
-		}
+//		reverse_iterator rbegin() {
+//			return reverse_iterator(_vec + _size);
+//		}
+//		const_reverse_iterator rbegin() const {
+//			return const_reverse_iterator(_vec + _size);
+//		}
+//		reverse_iterator rend() {
+//			return reverse_iterator(_vec);
+//		}
+//		const_reverse_iterator rend() const {
+//			return const_reverse_iterator(_vec);
+//		}
 		void reserve(size_type new_cap) {
 		    if (max_size() < new_cap)
                 throw std::length_error("vector<T>");
