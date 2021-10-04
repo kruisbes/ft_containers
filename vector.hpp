@@ -206,6 +206,7 @@ namespace ft {
 					_allocator.construct(_vec + i, *(_vec + i - 1));
 					_allocator.destroy(_vec + i - 1);
 				}
+//                    *(_vec + i) = *(_vec + i - 1);
                 _allocator.construct(_vec + pos, val);
                 _size++;
             }
@@ -258,6 +259,7 @@ namespace ft {
         void insert(InputIterator position,
                     typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type first,
                     typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
+//			if (first < this->end() && first > this->begin())
             if (std::distance(first, last) < 0)
                 throw (std::length_error("vector: range insert"));
             size_type pos = std::distance(begin(), position);
@@ -307,15 +309,14 @@ namespace ft {
 			return _allocator.max_size();
 		}
 		vector & operator=(const vector & other) {
-			if (_vec != 0) {
-				this->clear();
-			}
-			if (this != other)
-			{
-				_size = other.size();
-				_capacity = other.capacity();
+			if (_vec != 0)
+				clear();
+			if (this != other) {
+				_allocator.deallocate(_capacity);
+				_capacity = other._capacity;
+				_size = other._size;
 				_vec = _allocator.allocate(_capacity);
-				for (size_type i = 0; i < _size; i++)
+				for (size_type i = 0; i < _size; ++i)
 					_allocator.construct(_vec + i, *(other._vec + i));
 			}
 			return *this;
@@ -329,29 +330,34 @@ namespace ft {
 		void pop_back() {
 			erase(end() - 1);
 		}
+		void push_back(const T & val) {
+			_size++;
+			if (_capacity == 0) {
+			    _capacity = 1;
+			    _vec = _allocator.allocate(_capacity);
+			}
+			if (_size > _capacity) {
+				pointer temp_arr = _allocator.allocate(_size);
+				for (size_type i = 0; i < _size; i++) {
+					_allocator.construct(temp_arr + i, *(_vec + i));
+					_allocator.destroy(_vec + i);
+				}
+				_allocator.construct(temp_arr + _size - 1, val);
+				_allocator.deallocate(_vec, _capacity);
+				_capacity *= 2;
+				_vec = _allocator.allocate(_capacity);
+				for (size_type i = 0; i < _size; ++i)
+					_allocator.construct(_vec + i, *(temp_arr + i));
+				_allocator.deallocate(temp_arr, _size);
+			}
+			else {
+				_allocator.construct(_vec + _size - 1, val);
+			}
+		}
 		reverse_iterator rbegin() {
 			return reverse_iterator(_vec + _size);
 		}
-        void push_back(const value_type & val) {
-            _size++;
-            if (_size > _capacity) {
-                size_type tempCap = _capacity;
-                _capacity = (_capacity == 0) ? 1 : _capacity * 2;
-                pointer temp_arr = _allocator.allocate(_capacity);
-                size_type i;
-                for (i = 0; i < _size - 1; ++i) {
-                    _allocator.construct(temp_arr + i, *(_vec + i));
-                    _allocator.destroy(_vec + i);
-                }
-                _allocator.construct(temp_arr + i, val);
-                if (tempCap > 0)
-                    _allocator.deallocate(_vec, tempCap);
-                _vec = temp_arr;
-            }
-            else
-                _allocator.construct(_vec + _size - 1, val);
-        }
-        const_reverse_iterator rbegin() const {
+		const_reverse_iterator rbegin() const {
 			return const_reverse_iterator(_vec + _size);
 		}
 		reverse_iterator rend() {
