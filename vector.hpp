@@ -206,7 +206,6 @@ namespace ft {
 					_allocator.construct(_vec + i, *(_vec + i - 1));
 					_allocator.destroy(_vec + i - 1);
 				}
-//                    *(_vec + i) = *(_vec + i - 1);
                 _allocator.construct(_vec + pos, val);
                 _size++;
             }
@@ -259,7 +258,6 @@ namespace ft {
         void insert(InputIterator position,
                     typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type first,
                     typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
-//			if (first < this->end() && first > this->begin())
             if (std::distance(first, last) < 0)
                 throw (std::length_error("vector: range insert"));
             size_type pos = std::distance(begin(), position);
@@ -369,7 +367,7 @@ namespace ft {
 //		}
 		void reserve(size_type new_cap) {
 		    if (max_size() < new_cap)
-                throw std::length_error("vector<T>");
+                throw std::length_error("vector");
 		    else if (capacity() < new_cap) {
 		        pointer temp_arr = _allocator.allocate(new_cap);
                 for (size_type i = 0; i < _size; i++) {
@@ -385,6 +383,9 @@ namespace ft {
 		    }
 		}
 		void resize(size_type n, T val = value_type()) {
+			if (n > max_size()) {
+				throw (std::length_error("vector"));
+			}
 		    if (_size > n) {
                 for (size_type i = n; i < _size; ++i)
                     _allocator.destroy(_vec + i);

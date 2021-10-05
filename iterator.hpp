@@ -21,9 +21,6 @@ namespace ft
 		iterator(const iterator & rhs) {
 			*this = rhs;
 		}
-//		iterator(const const_iterator<T> & rhs) {
-//			*this = rhs;
-//		}
 		iterator(pointer rhs)
 		{
 			this->ptr = rhs;
@@ -91,10 +88,9 @@ namespace ft
 		iterator operator+(const difference_type & a) {
 			return this->ptr + a;
 		}
-		template<typename It>
-		friend It operator+(const difference_type & a, const It & iter) {
-			return iter.ptr + a;
-		}
+		template<typename L>
+		friend iterator<L> operator +(const typename iterator<L>::difference_type & a, const iterator<L> & iter);
+
 		iterator operator-(const difference_type & a) {
 			return this->ptr - a;
 		}
@@ -215,173 +211,177 @@ namespace ft
 			return (*(this->ptr + n));
 		}
 	};
+//	template <typename T> class reverse_iterator {
+//	public:
+//		typedef T value_type;
+//		typedef std::ptrdiff_t difference_type;
+//		typedef T* pointer;
+//		typedef T& reference;
+//		typedef std::random_access_iterator_tag iterator_category;
+//		pointer ptr;
+//
+//		reverse_iterator() { this->ptr = NULL;}
+//		reverse_iterator(const reverse_iterator & rhs) {
+//			*this = rhs;
+//		}
+//		reverse_iterator(pointer rhs) {
+//			this->ptr = rhs;
+//		}
+//		~reverse_iterator() {}
+//		reverse_iterator & operator=(const reverse_iterator & rhs) {
+//			this->ptr = rhs.ptr;
+//			return *this;
+//		}
+//		bool operator==(const reverse_iterator &rhs) {
+//			return this->ptr == rhs.ptr;
+//		}
+//		bool operator!=(const reverse_iterator & rhs) {
+//			return this->ptr != rhs.ptr;
+//		}
+//		bool operator<(const reverse_iterator & rhs) {
+//			return this->ptr < rhs.ptr;
+//		}
+//		bool operator<=(const reverse_iterator & rhs) {
+//			return this->ptr <= rhs.ptr;
+//		}
+//		bool operator>(const reverse_iterator & rhs) {
+//			return this->ptr > rhs.ptr;
+//		}
+//		bool operator>=(const reverse_iterator & rhs) {
+//			return this->ptr >= rhs.ptr;
+//		}
+//		reverse_iterator & operator++() {
+//			--this->ptr;
+//			return *this;
+//		}
+//		reverse_iterator & operator++(int) {
+//			reverse_iterator tmp = *this;
+//			--this->ptr;
+//			return tmp;
+//		}
+//		reverse_iterator & operator--() {
+//			++this->ptr;
+//			return *this;
+//		}
+//		reverse_iterator & operator--(int) {
+//			reverse_iterator tmp = *this;
+//			++this->ptr;
+//			return tmp;
+//		}
+//		reverse_iterator operator+(const difference_type & a) {
+//			return this->ptr - a;
+//		}
+//		reverse_iterator operator-(const difference_type & a) {
+//			return this->ptr + a;
+//		}
+//		reverse_iterator & operator+=(const difference_type & a) {
+//			return this->ptr -= a;
+//		}
+//		reverse_iterator & operator-=(const difference_type & a) {
+//			return this->ptr += a;
+//		}
+//		pointer operator->() {
+//			return this->ptr;
+//		}
+//		value_type & operator*() {
+//			return *ptr;
+//		}
+//		reference operator[](difference_type n) const {
+//			return (*(this->ptr + n));
+//		}
+//	};
+//	template <typename T> class const_reverse_iterator {
+//	public:
+//		typedef const T value_type;
+//		typedef std::ptrdiff_t difference_type;
+//		typedef const T* pointer;
+//		typedef const T& reference;
+//		typedef std::random_access_iterator_tag iterator_category;
+//		pointer ptr;
+//
+//		const_reverse_iterator() { this->ptr = NULL;}
+//		const_reverse_iterator(const const_reverse_iterator & rhs) {
+//			*this = rhs;
+//		}
+//		const_reverse_iterator(const reverse_iterator<T> & rhs) {
+//			*this = rhs;
+//		}
+//		const_reverse_iterator(pointer rhs) {
+//			this->ptr = rhs;
+//		}
+//		~const_reverse_iterator() {}
+//		const_reverse_iterator & operator=(const const_reverse_iterator & rhs) {
+//			this->ptr = rhs.ptr;
+//			return *this;
+//		}
+//		const_reverse_iterator & operator=(const reverse_iterator<T> & rhs) {
+//			if (this != rhs)
+//				this->ptr = rhs.ptr;
+//			return *this;
+//		}
+//		bool operator==(const const_reverse_iterator &rhs) {
+//			return this->ptr == rhs.ptr;
+//		}
+//		bool operator!=(const const_reverse_iterator & rhs) {
+//			return this->ptr != rhs.ptr;
+//		}
+//		bool operator<(const const_reverse_iterator & rhs) {
+//			return this->ptr < rhs.ptr;
+//		}
+//		bool operator<=(const const_reverse_iterator & rhs) {
+//			return this->ptr <= rhs.ptr;
+//		}
+//		bool operator>(const const_reverse_iterator & rhs) {
+//			return this->ptr > rhs.ptr;
+//		}
+//		bool operator>=(const const_reverse_iterator & rhs) {
+//			return this->ptr >= rhs.ptr;
+//		}
+//		const_reverse_iterator & operator++() {
+//			--this->ptr;
+//			return *this;
+//		}
+//		const_reverse_iterator & operator++(int) {
+//			const_reverse_iterator tmp = *this;
+//			--this->ptr;
+//			return tmp;
+//		}
+//		const_reverse_iterator & operator--() {
+//			++this->ptr;
+//			return *this;
+//		}
+//		const_reverse_iterator & operator--(int) {
+//			const_reverse_iterator tmp = *this;
+//			++this->ptr;
+//			return tmp;
+//		}
+//		const_reverse_iterator operator+(const difference_type & a) {
+//			return this->ptr - a;
+//		}
+//		const_reverse_iterator operator-(const difference_type & a) {
+//			return this->ptr + a;
+//		}
+//		const_reverse_iterator & operator+=(const difference_type & a) {
+//			return this->ptr -= a;
+//		}
+//		const_reverse_iterator & operator-=(const difference_type & a) {
+//			return this->ptr += a;
+//		}
+//		pointer operator->() {
+//			return this->ptr;
+//		}
+//		value_type & operator*() {
+//			return *ptr;
+//		}
+//		const_reverse_iterator & operator[](difference_type n) const {
+//			return (*(this + n));
+//		}
+//	};
 
-	template <typename T> class reverse_iterator {
-	public:
-		typedef T value_type;
-		typedef std::ptrdiff_t difference_type;
-		typedef T* pointer;
-		typedef T& reference;
-		typedef std::random_access_iterator_tag iterator_category;
-		pointer ptr;
-
-		reverse_iterator() { this->ptr = NULL;}
-		reverse_iterator(const reverse_iterator & rhs) {
-			*this = rhs;
-		}
-		reverse_iterator(pointer rhs) {
-			this->ptr = rhs;
-		}
-		~reverse_iterator() {}
-		reverse_iterator & operator=(const reverse_iterator & rhs) {
-			this->ptr = rhs.ptr;
-			return *this;
-		}
-		bool operator==(const reverse_iterator &rhs) {
-			return this->ptr == rhs.ptr;
-		}
-		bool operator!=(const reverse_iterator & rhs) {
-			return this->ptr != rhs.ptr;
-		}
-		bool operator<(const reverse_iterator & rhs) {
-			return this->ptr < rhs.ptr;
-		}
-		bool operator<=(const reverse_iterator & rhs) {
-			return this->ptr <= rhs.ptr;
-		}
-		bool operator>(const reverse_iterator & rhs) {
-			return this->ptr > rhs.ptr;
-		}
-		bool operator>=(const reverse_iterator & rhs) {
-			return this->ptr >= rhs.ptr;
-		}
-		reverse_iterator & operator++() {
-			--this->ptr;
-			return *this;
-		}
-		reverse_iterator & operator++(int) {
-			reverse_iterator tmp = *this;
-			--this->ptr;
-			return tmp;
-		}
-		reverse_iterator & operator--() {
-			++this->ptr;
-			return *this;
-		}
-		reverse_iterator & operator--(int) {
-			reverse_iterator tmp = *this;
-			++this->ptr;
-			return tmp;
-		}
-		reverse_iterator operator+(const difference_type & a) {
-			return this->ptr - a;
-		}
-		reverse_iterator operator-(const difference_type & a) {
-			return this->ptr + a;
-		}
-		reverse_iterator & operator+=(const difference_type & a) {
-			return this->ptr -= a;
-		}
-		reverse_iterator & operator-=(const difference_type & a) {
-			return this->ptr += a;
-		}
-		pointer operator->() {
-			return this->ptr;
-		}
-		value_type & operator*() {
-			return *ptr;
-		}
-		reference operator[](difference_type n) const {
-			return (*(this->ptr + n));
-		}
-	};
-	template <typename T> class const_reverse_iterator {
-	public:
-		typedef const T value_type;
-		typedef std::ptrdiff_t difference_type;
-		typedef const T* pointer;
-		typedef const T& reference;
-		typedef std::random_access_iterator_tag iterator_category;
-		pointer ptr;
-
-		const_reverse_iterator() { this->ptr = NULL;}
-		const_reverse_iterator(const const_reverse_iterator & rhs) {
-			*this = rhs;
-		}
-		const_reverse_iterator(const reverse_iterator<T> & rhs) {
-			*this = rhs;
-		}
-		const_reverse_iterator(pointer rhs) {
-			this->ptr = rhs;
-		}
-		~const_reverse_iterator() {}
-		const_reverse_iterator & operator=(const const_reverse_iterator & rhs) {
-			this->ptr = rhs.ptr;
-			return *this;
-		}
-		const_reverse_iterator & operator=(const reverse_iterator<T> & rhs) {
-			if (this != rhs)
-				this->ptr = rhs.ptr;
-			return *this;
-		}
-		bool operator==(const const_reverse_iterator &rhs) {
-			return this->ptr == rhs.ptr;
-		}
-		bool operator!=(const const_reverse_iterator & rhs) {
-			return this->ptr != rhs.ptr;
-		}
-		bool operator<(const const_reverse_iterator & rhs) {
-			return this->ptr < rhs.ptr;
-		}
-		bool operator<=(const const_reverse_iterator & rhs) {
-			return this->ptr <= rhs.ptr;
-		}
-		bool operator>(const const_reverse_iterator & rhs) {
-			return this->ptr > rhs.ptr;
-		}
-		bool operator>=(const const_reverse_iterator & rhs) {
-			return this->ptr >= rhs.ptr;
-		}
-		const_reverse_iterator & operator++() {
-			--this->ptr;
-			return *this;
-		}
-		const_reverse_iterator & operator++(int) {
-			const_reverse_iterator tmp = *this;
-			--this->ptr;
-			return tmp;
-		}
-		const_reverse_iterator & operator--() {
-			++this->ptr;
-			return *this;
-		}
-		const_reverse_iterator & operator--(int) {
-			const_reverse_iterator tmp = *this;
-			++this->ptr;
-			return tmp;
-		}
-		const_reverse_iterator operator+(const difference_type & a) {
-			return this->ptr - a;
-		}
-		const_reverse_iterator operator-(const difference_type & a) {
-			return this->ptr + a;
-		}
-		const_reverse_iterator & operator+=(const difference_type & a) {
-			return this->ptr -= a;
-		}
-		const_reverse_iterator & operator-=(const difference_type & a) {
-			return this->ptr += a;
-		}
-		pointer operator->() {
-			return this->ptr;
-		}
-		value_type & operator*() {
-			return *ptr;
-		}
-		const_reverse_iterator & operator[](difference_type n) const {
-			return (*(this + n));
-		}
-	};
+	template <typename L>
+	iterator<L> operator+(const typename iterator<L>::difference_type& a, const iterator<L> & iter){
+		return iter.ptr + a;
+	}
 }
 
 #endif
