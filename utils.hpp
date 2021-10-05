@@ -1,5 +1,5 @@
-#ifndef FT_CONTAINERS_UTILS_HPP
-#define FT_CONTAINERS_UTILS_HPP
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 namespace ft {
 
