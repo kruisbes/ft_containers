@@ -47,9 +47,8 @@ namespace ft {
 
 		vector(size_type n, const T & val, const Allocator & al) : _size(n), _capacity(n), _allocator(al) {
 			_vec = _allocator.allocate(n);
-			pointer tmp = _vec;
-			for (size_type i = 0; i < n; i++, tmp++) {
-				_allocator.construct(tmp, val);
+			for (size_type i = 0; i < n; i++) {
+				_allocator.construct(_vec + i, val);
 			}
 		}
 
