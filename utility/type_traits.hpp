@@ -1,28 +1,7 @@
-#ifndef FT_CONTAINERS_UTILS_HPP
-#define FT_CONTAINERS_UTILS_HPP
+#ifndef TYPE_TRAITS_HPP
+#define TYPE_TRAITS_HPP
 
 namespace ft {
-
-	template <class InputIterator1, class InputIterator2>
-	bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
-		for (; first1 != last1; ++first1, ++first2) {
-			if (*first1 != *first2)
-				return false;
-		}
-		return true;
-	};
-
-	template <class InputIterator1, class InputIterator2>
-	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2) {
-		for (; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2) {
-			if (*first1 < *first2)
-				return true;
-			if (*first2 < *first1)
-				return false;
-		}
-		return (first1 == last1) && (first2 != last2);
-	};
-
 	template <typename T>
 	struct remove_const {
 		typedef T type;
@@ -101,31 +80,6 @@ namespace ft {
 	struct enable_if<true, T> {
 		typedef T type;
 	};
-	template<class Iter>
-	struct iterator_traits {
-		typedef typename Iter::difference_type difference_type;
-		typedef typename Iter::value_type value_type;
-		typedef typename Iter::pointer pointer;
-		typedef typename Iter::reference reference;
-		typedef typename Iter::iterator_category iterator_category;
-	};
-	template<class T>
-	struct iterator_traits<T*> {
-		typedef std::ptrdiff_t difference_type;
-		typedef T value_type;
-		typedef T* pointer;
-		typedef T& reference;
-		typedef std::random_access_iterator_tag iterator_category;
-	};
-	template<class T>
-	struct iterator_traits<const T*> {
-		typedef std::ptrdiff_t difference_type;
-		typedef T value_type;
-		typedef T* pointer;
-		typedef T& reference;
-		typedef std::random_access_iterator_tag iterator_category;
-	};
 }
-/////////////
 
 #endif

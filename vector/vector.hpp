@@ -1,9 +1,10 @@
-#ifndef FT_CONTAINERS_VECTOR_HPP
-#define FT_CONTAINERS_VECTOR_HPP
+#ifndef VECTOR_HPP
+#define VECTOR_HPP
 
 #include <iostream>
-#include "iterator.hpp"
-#include "utils.hpp"
+#include "../iterator/iterator.hpp"
+#include "../utility/type_traits.hpp"
+#include "../utility/algorithm.hpp"
 
 namespace ft {
 	template <class T, class Allocator = std::allocator<T> >

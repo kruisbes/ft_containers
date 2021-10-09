@@ -1,6 +1,7 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
+#include "iterator_traits.hpp"
 #include <iostream>
 #include <cstddef>
 
@@ -378,6 +379,9 @@ namespace ft
 //		}
 //	};
 
+	template <class Iterator> class reverse_iterator {
+		
+	};
 	template <typename L>
 	iterator<L> operator+(const typename iterator<L>::difference_type& a, const iterator<L> & iter){
 		return iter.ptr + a;

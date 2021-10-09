@@ -1,7 +1,7 @@
-#ifndef FT_CONTAINERS_STACK_HPP
-#define FT_CONTAINERS_STACK_HPP
+#ifndef STACK_HPP
+#define STACK_HPP
 
-#include "vector.hpp"
+#include "../vector/vector.hpp"
 
 namespace ft {
     template <class T, class Container = ft::vector<T> > class stack {
