@@ -1,24 +1,26 @@
 #ifndef FT_CONTAINERS_MAP_HPP
 #define FT_CONTAINERS_MAP_HPP
 
+#include "pair.hpp"
+// elements in a map are always sorted by its key
 namespace ft {
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T> > >
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map {
 	public:
 
 		// DEF
 
-		typedef Key key_type;
-		typedef T mapped_type;
-		typedef std::pair<const Key, T> value_type;
-		typedef std::size_t size_type;
-		typedef std::ptrdiff_t difference_type;
-		typedef Compare key_compare;
-		typedef Allocator allocator_type;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
-		typedef typename Allocator::pointer pointer;
-		typedef typename Allocator::const_pointer const_pointer;
+		typedef Key									key_type;
+		typedef T									mapped_type;
+		typedef ft::pair<const Key, T>				value_type;
+		typedef std::size_t							size_type;
+		typedef std::ptrdiff_t						difference_type;
+		typedef Compare								key_compare;
+		typedef Allocator							allocator_type;
+		typedef value_type&							reference;
+		typedef const value_type&					const_reference;
+		typedef typename Allocator::pointer			pointer;
+		typedef typename Allocator::const_pointer	const_pointer;
 		typedef std::iterator<std::bidirectional_iterator_tag, mapped_type, difference_type, pointer, reference> iterator;
 		typedef std::iterator<std::bidirectional_iterator_tag, const mapped_type, difference_type, const_pointer, const_reference> const_iterator;
 		typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -32,8 +34,8 @@ namespace ft {
 		// VALUE COMPARE CLASS
 
 		class value_compare {
+			friend class map;
 		public:
-
 			value_compare() {}
 			~value_compare() {}
 
@@ -52,14 +54,13 @@ namespace ft {
 
 		// CONSTRUCTORS + DESTRUCTOR
 
-		map();
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
 
-		explicit map(const Compare& comp, const Allocator& alloca = Allocator());
+		template<class InputIterator>
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
+			const allocator_type& alloc = allocator_type());
 
-		template<class InputIt>
-		map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator());
-
-		map(const map& other);
+		map(const map& x);
 
 		~map();
 
@@ -78,15 +79,15 @@ namespace ft {
 		}
 		iterator end();
 		const_iterator end() const;
-		std::pair<const_iterator, const_iterator> equal_range(const key_type& k) const;
-		std::pair<iterator, iterator> equal_range(const key_type& k);
+		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const;
+		ft::pair<iterator, iterator> equal_range(const key_type& k);
 		void erase(iterator position);
 		size_type erase(const key_type& k);
 		void erase(iterator first, iterator last);
 		iterator find(const key_type& k);
 		const_iterator find(const key_type& k) const;
 		allocator_type get_allocator() const;
-		std::pair<iterator, bool> insert(const value_type& val);
+		ft::pair<iterator, bool> insert(const value_type& val);
 		iterator insert(iterator position, const value_type& val);
 		template<class InputIterator>
 		void insert(InputIterator first, InputIterator last);
@@ -106,7 +107,7 @@ namespace ft {
 		void swap(map& x);
 		iterator upper_bound(const key_type& k);
 		const_iterator upper_bound(const key_type& k) const;
-		// value_compare value_comp() const;
+		value_compare value_comp() const;
 
 	private:
 		size_type _size;
