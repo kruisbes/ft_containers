@@ -56,6 +56,85 @@ void print_vector(const ft::vector<T> &v)
 	std::cout << std::endl;
 }
 
+void test_reverse_iterators()
+{
+	ft::vector<int> a(5, 10);
+	ft::vector<int>::reverse_iterator begin = a.rbegin();
+	ft::vector<int>::reverse_iterator end = a.rend();
+	ft::vector<int>::const_reverse_iterator cbegin = a.rbegin();
+	ft::vector<int>::const_reverse_iterator cend = a.rend();
+	std::cout << *(begin + 1) << std::endl;
+	std::cout << *(1 + begin) << std::endl;
+	std::cout << *(begin - 0) << std::endl;
+	std::cout << begin - end << std::endl;
+	std::cout << begin - cend << std::endl;
+	std::cout << end - begin << std::endl;
+	std::cout << end - cbegin << std::endl;
+	begin++;
+	cbegin++;
+	end--;
+	cend--;
+	++begin;
+	++cbegin;
+	std::cout << *begin << std::endl;
+	std::cout << *cbegin << std::endl;
+	std::cout << *end << std::endl;
+	std::cout << *cend << std::endl;
+	++end;
+	++cend;
+	--begin;
+	--cbegin;
+	--end;
+	--cend;
+	begin--;
+	cbegin--;
+	end--;
+	cend--;
+	std::cout << *(begin += 1) << std::endl;
+	std::cout << *(cbegin += 1) << std::endl;
+	std::cout << *(begin -= 1) << std::endl;
+	std::cout << *(cbegin -= 1) << std::endl;
+
+	std::cout << *begin << std::endl;
+	std::cout << *cbegin << std::endl;
+	std::cout << *end << std::endl;
+	std::cout << *cend << std::endl;
+
+	std::cout << (begin != cbegin) << std::endl;
+	std::cout << (begin != begin) << std::endl;
+	std::cout << (begin == cbegin) << std::endl;
+	std::cout << (begin == begin) << std::endl;
+
+	std::cout << (begin < cbegin) << std::endl;
+	std::cout << (begin < begin) << std::endl;
+	std::cout << (begin <= cbegin) << std::endl;
+	std::cout << (begin <= begin) << std::endl;
+
+	std::cout << (begin > cbegin) << std::endl;
+	std::cout << (begin > begin) << std::endl;
+	std::cout << (begin >= cbegin) << std::endl;
+	std::cout << (begin >= begin) << std::endl;
+
+	std::cout << begin[0] << std::endl;
+	std::cout << cbegin[0] << std::endl;
+	std::cout << end[0] << std::endl;
+	std::cout << cend[0] << std::endl;
+
+	ft::vector<class B> b(5);
+	ft::vector<class B>::iterator bbegin = b.begin();
+	ft::vector<class B>::const_iterator cbbegin = b.begin();
+
+	std::cout << bbegin->a << bbegin->b << std::endl;
+	std::cout << (*bbegin).a << (*bbegin).b << std::endl;
+
+	std::cout << cbbegin->a << cbbegin->b << std::endl;
+	std::cout << (*cbbegin).a << (*cbbegin).b << std::endl;
+
+	cbegin = begin;
+	//*cbegin = *begin;
+	//*cbegin = 10;
+}
+
 void test_iterators()
 {
 	ft::vector<int> a(5, 10);
@@ -538,6 +617,7 @@ void test_swap() {
 
 int main()
 {
+	test_reverse_iterators();
 	test_compare();
 	test_insert3();
 	test_reserve();

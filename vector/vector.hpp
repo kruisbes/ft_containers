@@ -13,18 +13,18 @@ namespace ft {
 
 		// DEF
 
-		typedef T value_type;
-		typedef Allocator allocator_type;
-		typedef std::size_t size_type;
-		typedef std::ptrdiff_t difference_type;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
-		typedef typename Allocator::pointer pointer;
-		typedef typename Allocator::const_pointer const_pointer;
-		typedef ft::iterator<T> iterator;
-		typedef ft::const_iterator<T> const_iterator;
-//		typedef ft::reverse_iterator<T> reverse_iterator;
-//		typedef ft::const_reverse_iterator<T> const_reverse_iterator;
+		typedef T										value_type;
+		typedef Allocator								allocator_type;
+		typedef std::size_t								size_type;
+		typedef std::ptrdiff_t							difference_type;
+		typedef value_type&								reference;
+		typedef const value_type&						const_reference;
+		typedef typename Allocator::pointer				pointer;
+		typedef typename Allocator::const_pointer		const_pointer;
+		typedef ft::iterator<T>							iterator;
+		typedef ft::const_iterator<T>					const_iterator;
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		// CONSTRUCTORS + DESTRUCTOR
 
@@ -353,18 +353,18 @@ namespace ft {
 				_allocator.construct(_vec + _size - 1, val);
 			}
 		}
-//		reverse_iterator rbegin() {
-//			return reverse_iterator(_vec + _size);
-//		}
-//		const_reverse_iterator rbegin() const {
-//			return const_reverse_iterator(_vec + _size);
-//		}
-//		reverse_iterator rend() {
-//			return reverse_iterator(_vec);
-//		}
-//		const_reverse_iterator rend() const {
-//			return const_reverse_iterator(_vec);
-//		}
+		reverse_iterator rbegin() {
+			return reverse_iterator(_vec + _size);
+		}
+		const_reverse_iterator rbegin() const {
+			return const_reverse_iterator(_vec + _size);
+		}
+		reverse_iterator rend() {
+			return reverse_iterator(_vec);
+		}
+		const_reverse_iterator rend() const {
+			return const_reverse_iterator(_vec);
+		}
 		void reserve(size_type new_cap) {
 		    if (max_size() < new_cap)
                 throw std::length_error("vector");
