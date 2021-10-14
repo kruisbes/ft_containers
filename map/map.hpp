@@ -1,5 +1,6 @@
 #ifndef FT_CONTAINERS_MAP_HPP
 #define FT_CONTAINERS_MAP_HPP
+#include <iostream>
 
 #include "pair.hpp"
 // elements in a map are always sorted by its key
@@ -23,8 +24,8 @@ namespace ft {
 		typedef typename Allocator::const_pointer	const_pointer;
 		typedef std::iterator<std::bidirectional_iterator_tag, mapped_type, difference_type, pointer, reference> iterator;
 		typedef std::iterator<std::bidirectional_iterator_tag, const mapped_type, difference_type, const_pointer, const_reference> const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator;
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef std::reverse_iterator<iterator>			reverse_iterator;
+		typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 //		typedef ft::map_iterator<value_type> iterator;
 //		typedef ft::const_map_iterator<value_type> const_iterator;

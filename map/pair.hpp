@@ -44,14 +44,15 @@ namespace ft {
 	}
 	template<class T1, class T2>
 	bool operator<(const ft::pair<T1, T2>& lhs, const ft::pair<T1, T2>& rhs) {
-		if (lhs.first < rhs.first)
-			return true;
-		else if (rhs.first < lhs.first)
-			return false;
-		else if (lhs.second < rhs.second)
-			return true;
-		else
-			return false;
+		return (lhs.first < rhs.first) || (!(rhs.first < lhs.first) && lhs.first < rhs.first);
+//		if (lhs.first < rhs.first)
+//			return true;
+//		else if (rhs.first < lhs.first)
+//			return false;
+//		else if (lhs.second < rhs.second)
+//			return true;
+//		else
+//			return false;
 	}
 	template<class T1, class T2>
 	bool operator<=(const ft::pair<T1, T2>& lhs, const ft::pair<T1, T2>& rhs) {

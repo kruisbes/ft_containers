@@ -7,8 +7,8 @@
 
 namespace ft
 {
-	template <typename T> class const_iterator;
-	template <typename T> class iterator
+	template <typename T> class ConstRanIt;
+	template <typename T> class RanItIt
 	{
 	public:
 		typedef T value_type;
@@ -16,97 +16,98 @@ namespace ft
 		typedef T* pointer;
 		typedef T& reference;
 		typedef std::random_access_iterator_tag iterator_category;
-		pointer ptr;
 
-		iterator() { this->ptr = NULL; }
-		iterator(const iterator & rhs) {
+		pointer base() const {
+			return ptr;
+		}
+		RanItIt() { this->ptr = NULL; }
+		RanItIt(const RanItIt & rhs) {
 			*this = rhs;
 		}
-		iterator(pointer rhs)
+		RanItIt(pointer rhs)
 		{
 			this->ptr = rhs;
 		}
-		~iterator() {}
-		iterator & operator=(const iterator & rhs) {
-			this->ptr = rhs.ptr;
+		~RanItIt() {}
+		RanItIt & operator=(const RanItIt & rhs) {
+			this->ptr = rhs.base();
 			return *this;
 		}
-
-		bool operator==(const iterator & rhs) const {
-			return this->ptr == rhs.ptr;
+		bool operator==(const RanItIt & rhs) const {
+			return this->ptr == rhs.base();
 		}
-		bool operator==(const const_iterator<T> & rhs) const {
-			return this->ptr == rhs.ptr;
+		bool operator==(const ConstRanIt<T> & rhs) const {
+			return this->ptr == rhs.base();
 		}
-		bool operator!=(const iterator & rhs) const {
-			return this->ptr != rhs.ptr;
+		bool operator!=(const RanItIt & rhs) const {
+			return this->ptr != rhs.base();
 		}
-		bool operator!=(const const_iterator<T> & rhs) const {
-			return this->ptr != rhs.ptr;
+		bool operator!=(const ConstRanIt<T> & rhs) const {
+			return this->ptr != rhs.base();
 		}
-		bool operator<(const iterator & rhs) {
-			return this->ptr < rhs.ptr;
+		bool operator<(const RanItIt & rhs) {
+			return this->ptr < rhs.base();
 		}
-		bool operator<(const const_iterator<T> & rhs){
-			return this->ptr < rhs.ptr;
+		bool operator<(const ConstRanIt<T> & rhs){
+			return this->ptr < rhs.base();
 		}
-		bool operator<=(const iterator & rhs) {
-			return this->ptr <= rhs.ptr;
+		bool operator<=(const RanItIt & rhs) {
+			return this->ptr <= rhs.base();
 		}
-		bool operator<=(const const_iterator<T> & rhs){
-			return this->ptr <= rhs.ptr;
+		bool operator<=(const ConstRanIt<T> & rhs){
+			return this->ptr <= rhs.base();
 		}
-		bool operator>(const iterator & rhs) {
-			return this->ptr > rhs.ptr;
+		bool operator>(const RanItIt & rhs) {
+			return this->ptr > rhs.base();
 		}
-		bool operator>(const const_iterator<T> & rhs){
-			return this->ptr > rhs.ptr;
+		bool operator>(const ConstRanIt<T> & rhs){
+			return this->ptr > rhs.base();
 		}
-		bool operator>=(const iterator & rhs) {
-			return this->ptr >= rhs.ptr;
+		bool operator>=(const RanItIt & rhs) {
+			return this->ptr >= rhs.base();
 		}
-		bool operator>=(const const_iterator<T> & rhs){
-			return this->ptr >= rhs.ptr;
+		bool operator>=(const ConstRanIt<T> & rhs){
+			return this->ptr >= rhs.base();
 		}
-		iterator & operator++() {
+		RanItIt & operator++() {
 			++this->ptr;
 			return *this;
 		}
-		iterator operator++(int) {
-			iterator tmp = *this;
+		RanItIt operator++(int) {
+			RanItIt tmp = *this;
 			++this->ptr;
 			return tmp;
 		}
-		iterator & operator--() {
+		RanItIt & operator--() {
 			--this->ptr;
 			return *this;
 		}
-		iterator operator--(int) {
-			iterator tmp = *this;
+		RanItIt operator--(int) {
+			RanItIt tmp = *this;
 			--this->ptr;
 			return tmp;
 		}
-		iterator operator+(difference_type a) const {
+		RanItIt operator+(difference_type a) const {
 			return this->ptr + a;
 		}
 
 		template<typename L>
-		friend iterator<L> operator+(typename iterator<L>::difference_type a, const iterator<L> & iter);
+		friend RanItIt<L> operator+(typename RanItIt<L>::difference_type a, const RanItIt<L> & iter);
 
-		iterator operator-(difference_type a) const {
+		RanItIt operator-(difference_type a) const {
 			return this->ptr - a;
 		}
-		difference_type operator-(const iterator b) const {
-			return this->ptr - b.ptr;
+		difference_type operator-(const RanItIt b) const {
+			return this->ptr - b.base();
 		}
-		difference_type operator-(const const_iterator<T> &b) const {
-			return this->ptr - b.ptr;
+		difference_type operator-(const ConstRanIt<T> &b) const {
+			return this->ptr - b.base();
 		}
-		iterator & operator+=(difference_type a) {
+		RanItIt & operator+=(difference_type a) {
 			this->ptr += a;
 			return *this;
 		}
-		iterator & operator-=(difference_type a) {
+		RanItIt & operator-=(difference_type a) {
 			this->ptr -= a;
 			return *this;
 		}
@@ -121,8 +122,10 @@ namespace ft
 		reference operator[](difference_type n) const {
 			return (*(this->ptr + n));
 		}
+	private:
+		pointer ptr;
 	};
-	template <typename T> class const_iterator
+	template <typename T> class ConstRanIt
 	{
 	public:
 		typedef const T value_type;
@@ -130,81 +133,83 @@ namespace ft
 		typedef const T* pointer;
 		typedef const T& reference;
 		typedef std::random_access_iterator_tag iterator_category;
-		pointer ptr;
 
-		const_iterator() { this->ptr = NULL; }
-		const_iterator(const const_iterator & rhs) {
+		pointer base() const {
+			return ptr;
+		}
+		ConstRanIt() { this->ptr = NULL; }
+		ConstRanIt(const ConstRanIt & rhs) {
 			*this = rhs;
 		}
-		const_iterator(const iterator<T> & rhs) {
+		ConstRanIt(const RanItIt<T> & rhs) {
 			*this = rhs;
 		}
-		const_iterator(pointer rhs)
+		ConstRanIt(pointer rhs)
 		{
 			this->ptr = rhs;
 		}
-		~const_iterator() {}
-		const_iterator & operator=(const const_iterator & rhs) {
-			this->ptr = rhs.ptr;
+		~ConstRanIt() {}
+		ConstRanIt & operator=(const ConstRanIt & rhs) {
+			this->ptr = rhs.base();
 			return *this;
 		}
-		const_iterator & operator=(const iterator<T> & rhs) {
-			this->ptr = rhs.ptr;
+		ConstRanIt & operator=(const RanItIt<T> & rhs) {
+			this->ptr = rhs.base();
 			return *this;
 		}
-		bool operator==(const const_iterator & rhs) {
-			return this->ptr == rhs.ptr;
+		bool operator==(const ConstRanIt & rhs) {
+			return this->ptr == rhs.base();
 		}
-		bool operator!=(const const_iterator & rhs) {
-			return this->ptr != rhs.ptr;
+		bool operator!=(const ConstRanIt & rhs) {
+			return this->ptr != rhs.base();
 		}
-		bool operator<(const const_iterator & rhs) {
-			return this->ptr < rhs.ptr;
+		bool operator<(const ConstRanIt & rhs) {
+			return this->ptr < rhs.base();
 		}
-		bool operator<=(const const_iterator & rhs) {
-			return this->ptr <= rhs.ptr;
+		bool operator<=(const ConstRanIt & rhs) {
+			return this->ptr <= rhs.base();
 		}
-		bool operator>(const const_iterator & rhs) {
-			return this->ptr > rhs.ptr;
+		bool operator>(const ConstRanIt & rhs) {
+			return this->ptr > rhs.base();
 		}
-		bool operator>=(const const_iterator & rhs) {
-			return this->ptr >= rhs.ptr;
+		bool operator>=(const ConstRanIt & rhs) {
+			return this->ptr >= rhs.base();
 		}
-		const_iterator & operator++() {
+		ConstRanIt & operator++() {
 			++this->ptr;
 			return *this;
 		}
-		const_iterator operator++(int) {
-			const_iterator tmp = *this;
+		ConstRanIt operator++(int) {
+			ConstRanIt tmp = *this;
 			++this->ptr;
 			return tmp;
 		}
-		const_iterator & operator--() {
+		ConstRanIt & operator--() {
 			--this->ptr;
 			return *this;
 		}
-		const_iterator operator--(int) {
-			const_iterator tmp = *this;
+		ConstRanIt operator--(int) {
+			ConstRanIt tmp = *this;
 			--this->ptr;
 			return tmp;
 		}
-		const_iterator operator+(difference_type a) const {
+		ConstRanIt operator+(difference_type a) const {
 			return this->ptr + a;
 		}
-		const_iterator operator-(difference_type a) const {
+		ConstRanIt operator-(difference_type a) const {
 			return this->ptr - a;
 		}
-		difference_type operator-(const iterator<T>& a) const {
-			return this->ptr - a.ptr;
+		difference_type operator-(const RanItIt<T>& a) const {
+			return this->ptr - a.base();
 		}
-		difference_type operator-(const const_iterator<T>& a) const {
-			return this->ptr - a.ptr;
+		difference_type operator-(const ConstRanIt<T>& a) const {
+			return this->ptr - a.base();
 		}
-		const_iterator & operator+=(difference_type a) {
+		ConstRanIt & operator+=(difference_type a) {
 			this->ptr += a;
 			return *this;
 		}
-		const_iterator & operator-=(difference_type a) {
+		ConstRanIt & operator-=(difference_type a) {
 			this->ptr -= a;
 			return *this;
 		}
@@ -218,10 +223,12 @@ namespace ft
 		reference operator[](difference_type n) const {
 			return (*(this->ptr + n));
 		}
+	private:
+		pointer ptr;
 	};
 	template <typename L>
-	iterator<L> operator+(typename iterator<L>::difference_type a, const iterator<L> & iter){
-		return iter.ptr + a;
+	RanItIt<L> operator+(typename RanItIt<L>::difference_type a, const RanItIt<L> & iter){
+		return iter.base() + a;
 	}
 
 	template <class Iter>

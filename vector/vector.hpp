@@ -2,7 +2,7 @@
 #define VECTOR_HPP
 
 #include <iostream>
-#include "../iterator/iterator.hpp"
+#include "../iterator/RandomAccess.hpp"
 #include "../utility/type_traits.hpp"
 #include "../utility/algorithm.hpp"
 
@@ -21,8 +21,8 @@ namespace ft {
 		typedef const value_type&						const_reference;
 		typedef typename Allocator::pointer				pointer;
 		typedef typename Allocator::const_pointer		const_pointer;
-		typedef ft::iterator<T>							iterator;
-		typedef ft::const_iterator<T>					const_iterator;
+		typedef ft::RanItIt<T>							iterator;
+		typedef ft::ConstRanIt<T>						const_iterator;
 		typedef ft::reverse_iterator<iterator>			reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -38,7 +38,6 @@ namespace ft {
 				_allocator.construct(_vec + i, T());
 			}
 		}
-
 		vector(size_type n, const T & val) : _size(n), _capacity(n), _allocator(allocator_type()) {
 			_vec = _allocator.allocate(n);
 			for (size_type i = 0; i < n; i++) {
