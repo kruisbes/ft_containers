@@ -1,24 +1,39 @@
 #include "pair.hpp"
 #include "map.hpp"
 #include <iostream>
+#include "rbtree.hpp"
 #include <iterator>
 #include <map>
 
 int main() {
-	std::map<int,int> first;
+	ft::pair<int, int> pair(13,15);
+	ft::pair<int, int> pair2(11,15);
+	ft::rbNode<ft::pair<int, int> >* a = new (ft::rbNode<ft::pair<int, int> >);
+	a->val = pair;
+	ft::rbNode<ft::pair<int, int> >* b = new (ft::rbNode<ft::pair<int, int> >);
+	b->val = pair2;
+	b->right = 0;
+	a->right = b;
+	ft::rbNode<ft::pair<int, int> > f;
+//	ft::rb_iterator<ft::pair<int, int> > b;
+	ft::rb_const_iterator<ft::pair<int, int> > c;
 
-	first['a']=10;
-	first['b']=30;
-	first['c']=50;
-	first['d']=70;
-
-	std::cout << first[97] << std::endl;
-	std::cout << first[98] << std::endl;
-	std::map<int, std::map<int, int> > second;
-	second[0] = first;
-	std::cout << second[0][100] << std::endl;
-
-	return 0;
+	std::cout << ft::rbNode<ft::pair<int, int> >::maximum(a)->val.first << std::endl;
+//	std::map<int,int> first;
+//
+//	first['a']=10;
+//	first['b']=30;
+//	first['c']=50;
+//	first['d']=70;
+//
+//	std::cout << first[97] << std::endl;
+//	std::cout << first[98] << std::endl;
+//	std::map<int, std::map<int, int> > second;
+//	second[0] = first;
+//	std::cout << second[0][100] << std::endl;
+//
+//	std::map<int, int>::iterator it = first.begin();
+//	return 0;
 //	ft::pair <std::string,double> product1;                     // default constructor
 //	ft::pair <std::string,double> product2 ("tomatoes",2.30);   // value init
 //	ft::pair <std::string,double> product3 (product2);          // copy constructor
