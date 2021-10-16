@@ -3,14 +3,15 @@
 
 #include <iostream>
 #include "pair.hpp"
+#include "../iterator/reverse_iterator.hpp"
 
 namespace ft {
-	enum rbColor {black = false, red = true};
+	enum rbColor {red = false, black = true};
+
 	template <typename Val>
 	struct rbNode {
 		typedef rbNode<Val>* pointer;
 		typedef const rbNode<Val>* const_pointer;
-		typedef
 		rbColor		clr;
 		rbNode*		parent;
 		rbNode*		left;
@@ -197,9 +198,10 @@ namespace ft {
 	inline bool operator!=(const rb_iterator<Val>& x, const rb_const_iterator<Val>& y) {
 		return x.node == y.node;
 	}
-	template<typename Key, typename Val, typename KeyOfValue, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val> >
+	template<typename Key, typename Val, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val> >
 	class rbTree {
-		typedef typename Alloc::template rebind<rbNode<Val> >::other node_allocator;
+//		typedef typename Alloc::template rebind<rbNode<Val> >::other node_allocator;
+		typedef std::allocator<rbNode<Val> > node_allocator;
 	public:
 
 		typedef Val										value_type;
@@ -210,35 +212,143 @@ namespace ft {
 		typedef const value_type*						const_pointer;
 		typedef value_type&								reference;
 		typedef const value_type&						const_reference;
-		typedef rbNode<Val>*							link_type;
-		typedef const rbNode<Val>*						const_link_type;
+		typedef rbNode<Val>*							rb_node;
+		typedef const rbNode<Val>*						const_rb_node;
 		typedef std::size_t								size_type;
 		typedef std::ptrdiff_t							difference_type;
 		typedef rb_iterator<value_type>					iterator;
 		typedef rb_const_iterator<value_type>			const_iterator;
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
-		rbTree();
-		rbTree(const rbTree& other);
-		rbTree& operator=(const rbTree& other);
-		~rbTree();
-
+		rbTree() : _root(), _size(0), _allocator(), _nodeAlloc(), _comp() {
+			_root.clr = red;
+			_root.parent = 0;
+			_root.right = &_root;
+			_root.left = &_root;
+			_size = 0;
+		}
+		rbTree(const Compare& comp, const allocator_type& a = allocator_type()) :
+				_root(), _size(), _allocator(), _nodeAlloc(a), _comp(comp) {
+			_root.clr = red;
+			_root.parent = 0;
+			_root.right = &_root;
+			_root.left = &_root;
+			_size = 0;
+		}
+		rbTree(const rbTree& other) {
+			if (other._root.parent) {
+				_root.parent = _copy(other._root.parent, &_root);
+				_root.left = rbNode<Val>::minimum(_root.parent);
+				_root.right = rbNode<Val>::maximum(_root.parent);
+				_size = other._size;
+			}
+		}
+		rbTree& operator=(const rbTree& other) { // 926
+			if (this != &other) {
+				clear();
+				_comp = other._comp;
+				if (other._root.parent != NULL) {
+					_root.parent = _copy(_root.parent, &_root);
+					_root.left = rbNode<Val>::minimum(_root.parent);
+					_root.right = rbNode<Val>::maximum(_root.parent);
+					_size = other._size;
+				}
+			}
+		}
+		~rbTree() {
+			_erase(_root.parent);
+		}
+		value_compare key_comp() const {
+			return _comp;
+		}
+		iterator begin() {
+			return iterator(_root.left);
+		}
+		const_iterator begin() const {
+			return const_iterator(_root.left);
+		}
+		iterator end() {
+			return iterator(&_root);
+		}
+		const_iterator end() const {
+			return const_iterator(&_root);
+		}
+		reverse_iterator rbegin() {
+			return reverse_iterator(end());
+		}
+		const_reverse_iterator rbegin() const {
+			return const_reverse_iterator(end());
+		}
+		reverse_iterator rend() {
+			return reverse_iterator(begin());
+		}
+		const_reverse_iterator rend() const {
+			return const_reverse_iterator(begin());
+		}
+		size_type size() const {
+			return _size;
+		}
+		size_type max_size() const {
+			return _nodeAlloc.max_size();
+		}
+		allocator_type get_allocator() {
+			return _allocator;
+		}
+		void clear() {
+			_erase(_root.parent);
+			_root.left = &_root;
+			_root.parent = NULL;
+			_root.right = &_root;
+			_size = 0;
+		}
+// root=parent begin=parent end=...
+// insert unique w it + value_type + pos/val
 	protected:
-		typedef rbNode<value_type>* node;
-		typedef const rbNode<value_type>* constNode;
+		typedef rbNode<value_type>* node; // _Base_ptr
+		typedef const rbNode<value_type>* constNode; // _Const_Base_ptr
 	private:
-		rbNode<value_type>	*root;
+		rbNode<value_type>	_root;
+		rbNode<value_type>	_end;
 		size_type			_size;
-		Alloc				_allocator;
+		allocator_type 		_allocator;
 		node_allocator		_nodeAlloc;
 		Compare				_comp;
-//		typedef Key									key_type;
-//		typedef T									mapped_type;
-//		typedef ft::pair<const Key, T>				value_type;
-		void makeNode() {
 
+		rb_node _clone_node(const_rb_node x) {
+			rb_node tmp = _nodeAlloc.allocate(1);
+			_allocator().construct(&tmp->val, x->val);
+			tmp->clr = x->clr;
+			tmp->right = NULL;
+			tmp->left = NULL;
+			return tmp;
 		}
-		void insert() {
-
+		rb_node _copy(rb_node x, rb_node y) {
+			rb_node top = _clone_node(x);
+			top->parent = y;
+			if (x->right)
+				top->right = _copy(x->right, top);
+			y = top;
+			x = x->left;
+			while (x) {
+				rb_node clone = _clone_node(x);
+				y->left = clone;
+				clone->parent = y;
+				if (x->right)
+					clone->right = _copy(x->right, clone);
+				y = clone;
+				x = x->left;
+			}
+			return top;
+		}
+		void _erase(rb_node x) {
+			while (x != NULL) {
+				_erase(x->right);
+				rb_node y = x->left;
+				_allocator.destroy(&x->val);
+				_nodeAlloc.deallocate(x, 1);
+				x = y;
+			}
 		}
 
 	};

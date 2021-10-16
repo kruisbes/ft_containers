@@ -18,7 +18,10 @@ int main() {
 //	ft::rb_iterator<ft::pair<int, int> > b;
 	ft::rb_const_iterator<ft::pair<int, int> > c;
 
-	std::cout << ft::rbNode<ft::pair<int, int> >::maximum(a)->val.first << std::endl;
+	ft::rbTree<char, ft::pair<int, char>, int> dnk;
+
+//	std::cout << ft::rbNode<ft::pair<int, int> >::maximum(a)->val.first << std::endl;
+//	std::allocator<int> alloc;
 //	std::map<int,int> first;
 //
 //	first['a']=10;

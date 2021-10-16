@@ -1,4 +1,17 @@
 #!/bin/zsh
+if [ 'clear' = "$1" ]
+then
+	rm -rf ft_output
+	rm -rf std_output
+	rm -rf a.out
+	rm -rf ft_vector
+	rm -rf std_vector
+	rm -rf a.out.dSYM
+	rm -rf vector.dSYM
+	echo "\033[38;5;412mDelete output files\033[0m"
+	return
+fi
+
 if [ 'bzz' = "$1" ]
 then
 	if grep "ft::vector" ./main.cpp > /dev/null
@@ -40,14 +53,3 @@ else
 fi
 rm -rf std_vector
 rm -rf ft_vector
-if [ 'clear' = "$1" ]
-then
-	rm -rf ft_output
-	rm -rf std_output
-	rm -rf a.out
-	rm -rf ft_vector
-	rm -rf std_vector
-	rm -rf a.out.dSYM
-	rm -rf vector.dSYM
-	echo "\033[38;5;412mDelete output files\033[0m"
-fi

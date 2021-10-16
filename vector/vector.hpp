@@ -5,7 +5,7 @@
 #include "../iterator/RandomAccess.hpp"
 #include "../utility/type_traits.hpp"
 #include "../utility/algorithm.hpp"
-
+#include "../iterator/reverse_iterator.hpp"
 namespace ft {
 	template <class T, class Allocator = std::allocator<T> >
 	class vector {
