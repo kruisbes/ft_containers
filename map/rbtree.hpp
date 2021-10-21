@@ -284,6 +284,11 @@ namespace ft {
 			_root.right = &_root;
 			_size = 0;
 		}
+		size_type count(const key_type& k) const {
+			if (find(k) == end())
+				return 0;
+			return 1;
+		}
 		iterator end() {
 			return iterator(&_root);
 		}
@@ -299,25 +304,42 @@ namespace ft {
 			while (x != 0) {
 				if (_comp(KeyOfValue()(x->val), k))
 					x = x->right;
-				else if (_comp(k, KeyOfValue()(x->val)))
-					y = x, x = x->left;
-				else {
-					rb_node xu(x), yu(y);
-					y = x, x = x->left;
-					xu = xu->right;
-					}
-					rb_node xlow = x;
-					rb_node ylow = y;
-					while (xlow != NULL) {
-						if (!_comp(KeyOfValue()(xlow->val), k))
-							ylow = xlow, xlow = xlow->left;
-						else
-							xlow = xlow->right;
-					}
-					return ft::pair<iterator, iterator>(); // 1158
+				else if (_comp(k, KeyOfValue()(x->val))) {
+					y = x;
+					x = x->left;
 				}
+				else {
+					rb_node xu(x);
+					rb_node yu(y);
+					y = x;
+					x = x->left;
+					xu = xu->right;
+					return ft::pair<iterator, iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
+				}
+			}
+			return ft::pair<iterator, iterator>(iterator(y), iterator(y));
 		}
-		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const;
+		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
+			const_rb_node x = _root.parent;
+			const_rb_node y = &_root;
+			while (x != 0) {
+				if (_comp(KeyOfValue()(x->val), k))
+					x = x->right;
+				else if (_comp(k, KeyOfValue()(x->val))) {
+					y = x;
+					x = x->left;
+				}
+				else {
+					const_rb_node xu(x);
+					const_rb_node yu(y);
+					y = x;
+					x = x->left;
+					xu = xu->right;
+					return ft::pair<const_iterator, const_iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
+				}
+			}
+			return ft::pair<const_iterator, const_iterator>(const_iterator(y), const_iterator(y));
+		}
 		iterator find(const key_type& key) {
 			iterator j = lower_bound(key);
 			return (j == end() || _comp(key, KeyOfValue()(j.node->val))? end() : j);
@@ -430,6 +452,32 @@ namespace ft {
 		}
 		size_type size() const {
 			return _size;
+		}
+		iterator upper_bound(const key_type& k) {
+			rb_node x = _root.parent;
+			rb_node y = &_root;
+			while (x != 0) {
+				if (_comp(k, KeyOfValue()(x->val))) {
+					y = x;
+					x = x->left;
+				}
+				else
+					x = x->right;
+			}
+			return iterator(y);
+		}
+		const_iterator upper_bound(const key_type& k) const {
+			const_rb_node x = _root.parent;
+			const_rb_node y = &_root;
+			while (x != 0) {
+				if (_comp(k, KeyOfValue()(x->val))) {
+					y = x;
+					x = x->left;
+				}
+				else
+					x = x->right;
+			}
+			return const_iterator(y);
 		}
 		void balance() {
 			bool is = is_balanced(_root.parent);
@@ -762,6 +810,51 @@ namespace ft {
 				return true;
 			return false;
 		}
+		iterator _low_help(rb_node x, rb_node y, const key_type& k) {
+			while (x != 0) {
+				if (_comp(KeyOfValue()(x->val), k)) {
+					y = x;
+					x = x->left;
+				}
+				else
+					x = x->right;
+			}
+			return iterator(y);
+		}
+		const_iterator _low_help(const_rb_node x, const_rb_node y, const key_type& k) const {
+			while (x != 0) {
+				if (_comp(KeyOfValue()(x->val), k)) {
+					y = x;
+					x = x->left;
+				}
+				else
+					x = x->right;
+			}
+			return const_iterator(y);
+		}
+		iterator _up_help(rb_node x, rb_node y, const key_type& k) {
+			while (x != 0) {
+				if (_comp(k, KeyOfValue()(x->val))) {
+					y = x;
+					x = x->left;
+				}
+				else
+					x = x->right;
+			}
+			return iterator(y);
+		}
+		const_iterator _up_help(const_rb_node x, const_rb_node y, const key_type& k) const {
+			while (x != 0) {
+				if (_comp(k, KeyOfValue()(x->val))) {
+					y = x;
+					x = x->left;
+				}
+				else
+					x = x->right;
+			}
+			return const_iterator(y);
+		}
+
 
 	};
 }

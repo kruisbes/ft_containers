@@ -28,14 +28,6 @@ namespace ft {
 		typedef typename tree::const_iterator const_iterator;
 		typedef typename tree::reverse_iterator reverse_iterator;
 		typedef typename tree::const_reverse_iterator const_reverse_iterator;
-//		typedef std::iterator<std::bidirectional_iterator_tag, mapped_type, difference_type, pointer, reference> iterator;
-//		typedef std::iterator<std::bidirectional_iterator_tag, const mapped_type, difference_type, const_pointer, const_reference> const_iterator;
-//		typedef std::reverse_iterator<iterator>			reverse_iterator;
-//		typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
-//		typedef ft::map_iterator<value_type> iterator;
-//		typedef ft::const_map_iterator<value_type> const_iterator;
-//		typedef ft::map_reverse_iterator<value_type> reverse_iterator;
-//		typedef ft::const_map_reverse_iterator<value_type> const_reverse_iterator;
 
 		// VALUE COMPARE CLASS
 
@@ -85,7 +77,9 @@ namespace ft {
 		void clear() {
 			return _tree.clear();
 		}
-		size_type count(const key_type& k) const;
+		size_type count(const key_type& k) const {
+			return _tree.count(k);
+		}
 		bool empty() const {
 			return _tree.empty();
 		}
@@ -95,8 +89,12 @@ namespace ft {
 		const_iterator end() const {
 			return _tree.end();
 		}
-		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const;
-		ft::pair<iterator, iterator> equal_range(const key_type& k);
+		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
+			return _tree.equal_range(k);
+		}
+		ft::pair<iterator, iterator> equal_range(const key_type& k) {
+			return _tree.equal_range(k);
+		}
 		void erase(iterator position);
 		size_type erase(const key_type& k);
 		void erase(iterator first, iterator last);
@@ -145,8 +143,12 @@ namespace ft {
 			return _tree.size();
 		}
 		void swap(map& x);
-		iterator upper_bound(const key_type& k);
-		const_iterator upper_bound(const key_type& k) const;
+		iterator upper_bound(const key_type& k) {
+			return _tree.upper_bound(k);
+		}
+		const_iterator upper_bound(const key_type& k) const {
+			return _tree.upper_bound(k);
+		}
 		value_compare value_comp() const;
 
 	private:
