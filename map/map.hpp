@@ -95,9 +95,15 @@ namespace ft {
 		ft::pair<iterator, iterator> equal_range(const key_type& k) {
 			return _tree.equal_range(k);
 		}
-		void erase(iterator position);
-		size_type erase(const key_type& k);
-		void erase(iterator first, iterator last);
+		void erase(iterator position) {
+            _tree.erase(position);
+        }
+		size_type erase(const key_type& k) {
+            return _tree.erase(k);
+        }
+		void erase(iterator first, iterator last) {
+            _tree.erase(first, last);
+        }
 		iterator find(const key_type& k) {
 			return _tree.find(k);
 		}
