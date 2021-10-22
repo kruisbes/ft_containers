@@ -560,6 +560,9 @@ namespace ft {
 			for (; first != last; ++first)
 				insert(*first);
 		}
+        Compare key_comp() const {
+            return _comp;
+        }
 		iterator lower_bound(const key_type& key) {
 			rb_node x = _root.parent;
 			rb_node y = &_root;
@@ -600,6 +603,35 @@ namespace ft {
 		size_type size() const {
 			return _size;
 		}
+        void swap(rbTree& sw) {
+            if (_root == 0) {
+                if (sw._root != 0) {
+                    _root.parent = sw._root.parent;
+                    _root.left = sw._root.left;
+                    _root.right = sw._root.right;
+                    _root.parent->parent = &_root;
+                    sw._root.parent = 0;
+                    sw._root.left = 0;
+                    sw._root.right = 0;
+                }
+                else if (_root.parent == 0) {
+                    sw._root.parent = _root.parent;
+                    sw._root.right = _root.right;
+                    sw._root.left = _root.left;
+                    sw._root.parent->parent = &sw._root;
+                }
+                else {
+                    std::swap(_root.parent, sw._root.parent);
+                    std::swap(_root.left, sw._root.left);
+                    std::swap(_root.right, sw._root.right);
+                    _root.parent->parent = &_root;
+                    sw._root.parent = &_root;
+                    sw._root.parent = &sw._root;
+                }
+                std::swap(_size, sw._size);
+                std::swap(_comp, sw._comp);
+            }
+        }
 		iterator upper_bound(const key_type& k) {
 			rb_node x = _root.parent;
 			rb_node y = &_root;
@@ -1010,6 +1042,26 @@ namespace ft {
     template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
     inline bool operator!=(const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr1, const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr2) {
         return !(tr1 == tr2);
+    }
+    template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
+    inline bool operator<(const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr1, const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr2) {
+        return ft::lexicographical_compare(tr1.begin(), tr1.end(), tr2.begin(), tr2.end());
+    }
+    template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
+    inline bool operator>(const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr1, const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr2) {
+        return tr2 < tr1;
+    }
+    template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
+    inline bool operator<=(const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr1, const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr2) {
+        return !(tr2 < tr1);
+    }
+    template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
+    inline bool operator>=(const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr1, const rbTree<Key, Val, KeyOfValue, Compare, Alloc>& tr2) {
+        return !(tr1 < tr2);
+    }
+    template<typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc>
+    inline void swap(rbTree<Key, Val, KeyOfValue, Compare, Alloc>& sw1, rbTree<Key, Val, KeyOfValue, Compare, Alloc>& sw2) {
+        sw1.swap(sw2);
     }
 }
 

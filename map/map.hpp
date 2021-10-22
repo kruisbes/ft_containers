@@ -52,20 +52,29 @@ namespace ft {
 
 		// CONSTRUCTORS + DESTRUCTOR
 
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(comp, alloc), _allocator(alloc) {}
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(comp, alloc) {}
 
 		template<class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-			const allocator_type& alloc = allocator_type());
+			const allocator_type& alloc = allocator_type()) : _tree(first, last) {}
 
-		map(const map& x);
+		map(const map& x) : _tree(x._tree) {}
 
-		~map() {}
+		~map() {
+            ~_tree;
+        }
 
 		// OPERATORS
 
-		map& operator=(const map& other);
-		mapped_type& operator[] (const key_type& k);
+		map& operator=(const map& other) {
+            _tree = other._tree;
+        }
+		mapped_type& operator[] (const key_type& k) {
+            iterator i = lower_bound(k);
+            if (i == end() || key_comp()(k, (*i).first))
+                i = insert(i, value_type(k, mapped_type()));
+            return (*i).second;
+        }
 
 		// MEMBER FUNCTIONS
 		iterator begin() {
@@ -123,7 +132,9 @@ namespace ft {
 		void insert(InputIterator first, InputIterator last) {
 			_tree.template insert(first, last);
 		}
-		key_compare key_comp() const;
+		key_compare key_comp() const {
+            return _tree.key_comp();
+        }
 		iterator lower_bound(const key_type& k) {
 			return _tree.lower_bound(k);
 		}
@@ -148,32 +159,57 @@ namespace ft {
 		size_type size() const {
 			return _tree.size();
 		}
-		void swap(map& x);
+		void swap(map& x) {
+            _tree.swap(x);
+        }
 		iterator upper_bound(const key_type& k) {
 			return _tree.upper_bound(k);
 		}
 		const_iterator upper_bound(const key_type& k) const {
 			return _tree.upper_bound(k);
 		}
-		value_compare value_comp() const;
+		value_compare value_comp() const {
+            return value_compare(_tree.key_comp());
+        }
 
-	private:
+        template<typename K, typename T1, typename Comp, typename Alloc>
+        friend bool operator==(const map<K, T1, Comp, Alloc>& x, const map<K, T1, Comp, Alloc>& y);
+        template<typename K, typename T1, typename Comp, typename Alloc>
+        friend bool operator<(const map<K, T1, Comp, Alloc>& x, const map<K, T1, Comp, Alloc>& y);
+
+    private:
 		tree _tree;
 		allocator_type _allocator;
 	};
 
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator==(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs);
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator!=(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs);
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator<(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs);
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator<=(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs);
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator>(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs);
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator>=(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs);
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline bool operator==(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        return x._tree == y._tree;
+    }
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline bool operator!=(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        return !(x == y);
+    }
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline bool operator<(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        return x._tree < y._tree;
+    }
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline bool operator>(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        return y < x;
+    }
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline bool operator<=(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        return !(y < x);
+    }
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline bool operator>=(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        return !(x < y);
+    }
+    template<typename K, typename T1, typename Comp, typename Alloc>
+    inline void swap(const map<K, T1, Comp, Alloc> &x, const map<K, T1, Comp, Alloc> &y) {
+        x.swap(y);
+    }
 }
 
 #endif
