@@ -196,7 +196,7 @@ namespace ft {
 	}
 	template <typename Val>
 	inline bool operator!=(const rb_iterator<Val>& x, const rb_const_iterator<Val>& y) {
-		return x.node == y.node;
+		return x.node != y.node;
 	}
 	template<typename Key, typename Val, typename KeyOfValue, typename Compare = std::less<Key>, typename Alloc = std::allocator<Val> >
 	class rbTree {
@@ -307,133 +307,136 @@ namespace ft {
                 x = x->left;
             return x;
         }
+		bool empty() const {
+			return _size == 0;
+		}
 		void erase(iterator position) {
-            rb_node z = position.node;
-            rb_node y = z;
-            rb_node x = 0;
-            rb_node xp = 0;
-            if (y->left == NULL)
-                x = y->right;
-            else {
-                if (y->right == NULL)
-                    x = y->left;
-                else {
-                    y = y->right;
-                    while (y->left != 0)
-                        y = y->left;
-                    x = y->right;
-                }
-            }
-            if (y == z) {
-                xp = y->parent;
-                if (x)
-                    x->parent = xp;
-                if (_root.parent == z)
-                    _root.parent = x;
-                else if (xp->left == z)
-                    xp->left = x;
-                else
-                    xp->right = x;
-                if (_root.left == z) {
-                    if (z->right == NULL)
-                        _root.left = xp;
-                    else
-                        _root.left = rbNode<value_type>::minimum(x);
-                }
-                if (_root.right == z) {
-                    if (z->left == NULL)
-                        _root.right = xp;
-                    else
-                        _root.right = rbNode<value_type>::maximum(x);
-                }
-            }
-            else {
-                z->left->parent = y;
-                y->left = z->left;
-                if (y != z->right) {
-                    xp = y->parent;
-                    if (x)
-                        x->parent = y->parent;
-                    y->parent->left = x;
-                    y->right = z->right;
-                    z->right->parent = y;
-                } else
-                    xp = y;
-                if (_root.parent == z)
-                    _root.parent = y;
-                else if (z->parent->left == z)
-                    z->parent->left = y;
-                else
-                    z->parent->right = y;
-                y->parent = z->parent;
-                std::swap(y->clr, z->clr);
-                y = z;
-            }
-            if (y->clr != red) {
-                while (x != _root.parent && (x != NULL || x->clr == black)) {
-                    if (x == xp->left) {
-                        rb_node w = xp->right;
-                        if (w->clr == red) {
-                            w->clr = black;
-                            xp->clr = red;
-                            _leftRotation(xp);
-                            w = xp->right;
-                        }
-                        if ((w->left == 0 || w->left->clr == black) && (w->right == 0 || w->right->clr == black)) {
-                            w->clr = red;
-                            x = xp;
-                            xp = xp->parent;
-                        }
-                        else {
-                            if (w->right == 0 || w->right->clr == black) {
-                                w->left->clr = black;
-                                w->clr = red;
-                                _rightRotation(w);
-                                w = xp->right;
-                            }
-                            w->clr = xp->clr;
-                            xp->clr = black;
-                            if (w->right)
-                                w->right->clr = black;
-                            _leftRotation(xp);
-                            break;
-                        }
-                    }
-                    else {
-                        rb_node w = xp->left;
-                        if (w->clr == red) {
-                            w->clr = black;
-                            xp->clr = red;
-                            _rightRotation(xp);
-                            w = xp->left;
-                        }
-                        if ((w->right == 0 || w->right->clr == black) && (w->left == 0 || w->left->clr == black)) {
-                            w->clr = red;
-                            x = xp;
-                            xp = xp->parent;
-                        }
-                        else {
-                            if (w->left == 0 || w->left->clr == black) {
-                                w->right->clr = black;
-                                w->clr = red;
-                                _leftRotation(w);
-                                w = xp->left;
-                            }
-                            w->clr = xp->clr;
-                            xp->clr = black;
-                            if (w->left)
-                                w->left->clr = black;
-                            _rightRotation(xp);
-                            break;
-                        }
-                    }
-                }
-                if (x)
-                    x->clr = black;
-            }
-            _allocator.destroy(&y->val);
-            _nodeAlloc.deallocate(y, 1);
-            _size--;
+			rb_node z = position.node;
+			rb_node y = z;
+			rb_node x = 0;
+			rb_node xp = 0;
+			if (y->left == NULL)
+				x = y->right;
+			else {
+				if (y->right == NULL)
+					x = y->left;
+				else {
+					y = y->right;
+					while (y->left != 0)
+						y = y->left;
+					x = y->right;
+				}
+			}
+			if (y == z) {
+				xp = y->parent;
+				if (x)
+					x->parent = y->parent;
+				if (_root.parent == z)
+					_root.parent = x;
+				else if (z->parent->left == z)
+					z->parent->left = x;
+				else
+					z->parent->right = x;
+				if (_root.left == z) {
+					if (z->right == NULL)
+						_root.left = z->parent;
+					else
+						_root.left = rbNode<value_type>::minimum(x);
+				}
+				if (_root.right == z) {
+					if (z->left == NULL)
+						_root.right = z->parent;
+					else
+						_root.right = rbNode<value_type>::maximum(x);
+				}
+			}
+			else {
+				z->left->parent = y;
+				y->left = z->left;
+				if (y != z->right) {
+					xp = y->parent;
+					if (x)
+						x->parent = y->parent;
+					y->parent->left = x;
+					y->right = z->right;
+					z->right->parent = y;
+				} else
+					xp = y;
+				if (_root.parent == z)
+					_root.parent = y;
+				else if (z->parent->left == z)
+					z->parent->left = y;
+				else
+					z->parent->right = y;
+				y->parent = z->parent;
+				std::swap(y->clr, z->clr);
+				y = z;
+			}
+			if (y->clr != red) {
+				while (x != _root.parent && (x == NULL || x->clr == black)) {
+					if (x == xp->left) {
+						rb_node w = xp->right;
+						if (w->clr == red) {
+							w->clr = black;
+							xp->clr = red;
+							_leftRotation(xp);
+							w = xp->right;
+						}
+						if ((w->left == 0 || w->left->clr == black) && (w->right == 0 || w->right->clr == black)) {
+							w->clr = red;
+							x = xp;
+							xp = xp->parent;
+						}
+						else {
+							if (w->right == 0 || w->right->clr == black) {
+								w->left->clr = black;
+								w->clr = red;
+								_rightRotation(w);
+								w = xp->right;
+							}
+							w->clr = xp->clr;
+							xp->clr = black;
+							if (w->right)
+								w->right->clr = black;
+							_leftRotation(xp);
+							break;
+						}
+					}
+					else {
+						rb_node w = xp->left;
+						if (w->clr == red) {
+							w->clr = black;
+							xp->clr = red;
+							_rightRotation(xp);
+							w = xp->left;
+						}
+						if ((w->right == 0 || w->right->clr == black) && (w->left == 0 || w->left->clr == black)) {
+							w->clr = red;
+							x = xp;
+							xp = xp->parent;
+						}
+						else {
+							if (w->left == 0 || w->left->clr == black) {
+								w->right->clr = black;
+								w->clr = red;
+								_leftRotation(w);
+								w = xp->left;
+							}
+							w->clr = xp->clr;
+							xp->clr = black;
+							if (w->left)
+								w->left->clr = black;
+							_rightRotation(xp);
+							break;
+						}
+					}
+				}
+				if (x)
+					x->clr = black;
+			}
+//			_allocator.destroy(&y->val);
+//			_nodeAlloc.deallocate(y, 1);
+			_size--;
         }
 		void erase(iterator first, iterator last) {
             while (first != last)
@@ -442,50 +445,51 @@ namespace ft {
 		size_type erase(const key_type & key) {
             iterator del = find(key);
             erase(del);
-            _size--;
             return _size;
         }
 		ft::pair<iterator, iterator> equal_range(const key_type& k) {
-			rb_node x = _root.parent;
-			rb_node y = &_root;
-			while (x != 0) {
-				if (_comp(KeyOfValue()(x->val), k))
-					x = x->right;
-				else if (_comp(k, KeyOfValue()(x->val))) {
-					y = x;
-					x = x->left;
-				}
-				else {
-					rb_node xu(x);
-					rb_node yu(y);
-					y = x;
-					x = x->left;
-					xu = xu->right;
-					return ft::pair<iterator, iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
-				}
-			}
-			return ft::pair<iterator, iterator>(iterator(y), iterator(y));
+			return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+//			rb_node x = _root.parent;
+//			rb_node y = &_root;
+//			while (x != 0) {
+//				if (_comp(KeyOfValue()(x->val), k))
+//					x = x->right;
+//				else if (_comp(k, KeyOfValue()(x->val))) {
+//					y = x;
+//					x = x->left;
+//				}
+//				else {
+//					rb_node xu(x);
+//					rb_node yu(y);
+//					y = x;
+//					x = x->left;
+//					xu = xu->right;
+//					return ft::pair<iterator, iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
+//				}
+//			}
+//			return ft::pair<iterator, iterator>(iterator(y), iterator(y));
 		}
 		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
-			const_rb_node x = _root.parent;
-			const_rb_node y = &_root;
-			while (x != 0) {
-				if (_comp(KeyOfValue()(x->val), k))
-					x = x->right;
-				else if (_comp(k, KeyOfValue()(x->val))) {
-					y = x;
-					x = x->left;
-				}
-				else {
-					const_rb_node xu(x);
-					const_rb_node yu(y);
-					y = x;
-					x = x->left;
-					xu = xu->right;
-					return ft::pair<const_iterator, const_iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
-				}
-			}
-			return ft::pair<const_iterator, const_iterator>(const_iterator(y), const_iterator(y));
+			return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+//			const_rb_node x = _root.parent;
+//			const_rb_node y = &_root;
+//			while (x != 0) {
+//				if (_comp(KeyOfValue()(x->val), k))
+//					x = x->right;
+//				else if (_comp(k, KeyOfValue()(x->val))) {
+//					y = x;
+//					x = x->left;
+//				}
+//				else {
+//					const_rb_node xu(x);
+//					const_rb_node yu(y);
+//					y = x;
+//					x = x->left;
+//					xu = xu->right;
+//					return ft::pair<const_iterator, const_iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
+//				}
+//			}
+//			return ft::pair<const_iterator, const_iterator>(const_iterator(y), const_iterator(y));
 		}
 		iterator find(const key_type& key) {
 			iterator j = lower_bound(key);

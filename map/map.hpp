@@ -2,7 +2,6 @@
 #define FT_CONTAINERS_MAP_HPP
 #include <iostream>
 
-#include "pair.hpp"
 #include "rbtree.hpp"
 #include "get_first.hpp"
 
@@ -19,11 +18,11 @@ namespace ft {
 		typedef std::ptrdiff_t						difference_type;
 		typedef Compare								key_compare;
 		typedef Allocator							allocator_type;
+		typedef rbTree<key_type, value_type, ft::get_first<value_type>, key_compare, allocator_type> tree;
 		typedef value_type&							reference;
 		typedef const value_type&					const_reference;
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
-		typedef rbTree<key_type, value_type, get_first<value_type>, key_compare, allocator_type> tree;
 		typedef typename tree::iterator iterator;
 		typedef typename tree::const_iterator const_iterator;
 		typedef typename tree::reverse_iterator reverse_iterator;
@@ -56,13 +55,11 @@ namespace ft {
 
 		template<class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-			const allocator_type& alloc = allocator_type()) : _tree(first, last) {}
+			const allocator_type& alloc = allocator_type()) : _tree(comp, alloc) {
+			_tree.insert(first, last);
+		}
 
 		map(const map& x) : _tree(x._tree) {}
-
-		~map() {
-            ~_tree;
-        }
 
 		// OPERATORS
 
@@ -70,12 +67,11 @@ namespace ft {
             _tree = other._tree;
         }
 		mapped_type& operator[] (const key_type& k) {
-            iterator i = lower_bound(k);
+            iterator i = find(k);
             if (i == end() || key_comp()(k, (*i).first))
                 i = insert(i, value_type(k, mapped_type()));
             return (*i).second;
         }
-
 		// MEMBER FUNCTIONS
 		iterator begin() {
 			return _tree.begin();
@@ -130,7 +126,7 @@ namespace ft {
 		}
 		template<class InputIterator>
 		void insert(InputIterator first, InputIterator last) {
-			_tree.template insert(first, last);
+			_tree.insert(first, last);
 		}
 		key_compare key_comp() const {
             return _tree.key_comp();
@@ -171,8 +167,7 @@ namespace ft {
 		value_compare value_comp() const {
             return value_compare(_tree.key_comp());
         }
-
-        template<typename K, typename T1, typename Comp, typename Alloc>
+		template<typename K, typename T1, typename Comp, typename Alloc>
         friend bool operator==(const map<K, T1, Comp, Alloc>& x, const map<K, T1, Comp, Alloc>& y);
         template<typename K, typename T1, typename Comp, typename Alloc>
         friend bool operator<(const map<K, T1, Comp, Alloc>& x, const map<K, T1, Comp, Alloc>& y);
