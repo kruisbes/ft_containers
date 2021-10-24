@@ -20,11 +20,33 @@ public:
 		}
 	}
 
-	~B() {
-		if (hehe)
-			delete[] hehe;
+	B(const B & src) {
+		hehe = new int[7];
+		for (int i = 0; i < 7; ++i) {
+			if (!src.hehe[i])
+				hehe[i] = 0;
+			else
+				hehe[i] = src.hehe[i];
+		}
 	}
-
+	B & operator=(const B & src){
+		if (this == &src)
+			return *this;
+		hehe = new int[7];
+		if (!src.hehe)
+			return *this;
+		for (int i = 0; i < 7; ++i) {
+			if (!src.hehe[i])
+				hehe[i] = 0;
+			else
+				hehe[i] = src.hehe[i];
+		}
+		return *this;
+	}
+	~B() {
+		std::cout << "AAA" << std::endl;
+		delete[] hehe;
+	}
 };
 
 std::ostream & operator<<(std::ostream & os, B const & bb) {
@@ -33,10 +55,10 @@ std::ostream & operator<<(std::ostream & os, B const & bb) {
 }
 
 template <class T>
-void print_vector(ft::vector<T> &v)
+void print_vector(std::vector<T> &v)
 {
-	typename ft::vector<T>::iterator begin = v.begin();
-	typename ft::vector<T>::iterator end = v.end();
+	typename std::vector<T>::iterator begin = v.begin();
+	typename std::vector<T>::iterator end = v.end();
 	std::cout << "capacity=\t" << v.capacity() << std::endl;
 	std::cout << "size=\t\t" << v.size() << std::endl;
 	for (; begin != end; begin++)
@@ -45,10 +67,10 @@ void print_vector(ft::vector<T> &v)
 }
 
 template <class T>
-void print_vector(const ft::vector<T> &v)
+void print_vector(const std::vector<T> &v)
 {
-	typename ft::vector<T>::const_iterator begin = v.begin();
-	typename ft::vector<T>::const_iterator end = v.end();
+	typename std::vector<T>::const_iterator begin = v.begin();
+	typename std::vector<T>::const_iterator end = v.end();
 	std::cout << "capacity=\t" << v.capacity() << std::endl;
 	std::cout << "size=\t\t" << v.size() << std::endl;
 	for (; begin != end; begin++)
@@ -58,11 +80,11 @@ void print_vector(const ft::vector<T> &v)
 
 void test_reverse_iterators()
 {
-	ft::vector<int> a(5, 10);
-	ft::vector<int>::reverse_iterator begin = a.rbegin();
-	ft::vector<int>::reverse_iterator end = a.rend();
-	ft::vector<int>::const_reverse_iterator cbegin = a.rbegin();
-	ft::vector<int>::const_reverse_iterator cend = a.rend();
+	std::vector<int> a(5, 10);
+	std::vector<int>::reverse_iterator begin = a.rbegin();
+	std::vector<int>::reverse_iterator end = a.rend();
+	std::vector<int>::const_reverse_iterator cbegin = a.rbegin();
+	std::vector<int>::const_reverse_iterator cend = a.rend();
 	std::cout << *(begin + 1) << std::endl;
 	std::cout << *(1 + begin) << std::endl;
 	std::cout << *(begin - 0) << std::endl;
@@ -120,9 +142,9 @@ void test_reverse_iterators()
 	std::cout << end[0] << std::endl;
 	std::cout << cend[0] << std::endl;
 
-	ft::vector<class B> b(5);
-	ft::vector<class B>::iterator bbegin = b.begin();
-	ft::vector<class B>::const_iterator cbbegin = b.begin();
+	std::vector<class B> b(5);
+	std::vector<class B>::iterator bbegin = b.begin();
+	std::vector<class B>::const_iterator cbbegin = b.begin();
 
 	std::cout << bbegin->a << bbegin->b << std::endl;
 	std::cout << (*bbegin).a << (*bbegin).b << std::endl;
@@ -137,11 +159,11 @@ void test_reverse_iterators()
 
 void test_iterators()
 {
-	ft::vector<int> a(5, 10);
-	ft::vector<int>::iterator begin = a.begin();
-	ft::vector<int>::iterator end = a.end();
-	ft::vector<int>::const_iterator cbegin = a.begin();
-	ft::vector<int>::const_iterator cend = a.end();
+	std::vector<int> a(5, 10);
+	std::vector<int>::iterator begin = a.begin();
+	std::vector<int>::iterator end = a.end();
+	std::vector<int>::const_iterator cbegin = a.begin();
+	std::vector<int>::const_iterator cend = a.end();
 	std::cout << *(begin + 1) << std::endl;
 	std::cout << *(1 + begin) << std::endl;
 	std::cout << *(begin - 0) << std::endl;
@@ -199,9 +221,9 @@ void test_iterators()
 	std::cout << end[0] << std::endl;
 	std::cout << cend[0] << std::endl;
 
-	ft::vector<class B> b(5);
-	ft::vector<class B>::iterator bbegin = b.begin();
-	ft::vector<class B>::const_iterator cbbegin = b.begin();
+	std::vector<class B> b(5);
+	std::vector<class B>::iterator bbegin = b.begin();
+	std::vector<class B>::const_iterator cbbegin = b.begin();
 
 	std::cout << bbegin->a << bbegin->b << std::endl;
 	std::cout << (*bbegin).a << (*bbegin).b << std::endl;
@@ -217,7 +239,7 @@ void test_iterators()
 void test_clear()
 {
 	{
-		ft::vector<int> a(4, 10);
+		std::vector<int> a(4, 10);
 		std::cout << a.size() << std::endl;
 		std::cout << a.capacity() << std::endl;
 		std::cout << a[0] << " " << a[1] << " "  << a[2] << " " << a[3] << std::endl;
@@ -227,9 +249,9 @@ void test_clear()
 		std::cout << a[0] << " " << a[1] << " "  << a[2] << " " << a[3] << std::endl;
 	}
 	{
-		ft::vector<int> a(10, 100);
-		ft::vector<int>::iterator begin = a.begin();
-		ft::vector<int>::iterator end = a.end();
+		std::vector<int> a(10, 100);
+		std::vector<int>::iterator begin = a.begin();
+		std::vector<int>::iterator end = a.end();
 		std::cout << end - begin << std::endl;
 		print_vector(a);
 		a.clear();
@@ -240,21 +262,21 @@ void test_clear()
 		std::cout << "\033[31m" << end - begin << "\033[0m" << std::endl;
 		print_vector(a);
 	}
-	ft::vector<int> c;
+	std::vector<int> c;
 	c.clear();
 	std::cout << c.max_size() << std::endl;
 }
 
 void test_million_push_back()
 {
-	ft::vector<int> a(10);
+	std::vector<int> a(10);
 	for (int i = 0; i < 1000000; i++)
 		a.push_back(1000);
 }
 
 void test_push_back()
 {
-	ft::vector<int> a;
+	std::vector<int> a;
 	a.push_back(1);
 	print_vector(a);
 }
@@ -262,29 +284,29 @@ void test_push_back()
 void test_assign()
 {
 	//with_iterators
-	ft::vector<int> a(15, 1);
-	ft::vector<int> b(10, 9);
+	std::vector<int> a(15, 1);
+	std::vector<int> b(10, 9);
 	print_vector(b);
-	ft::vector<int>::iterator begin = a.begin();
-	ft::vector<int>::iterator end = a.end();
-	ft::vector<int>::iterator cbegin = a.begin();
-	ft::vector<int>::iterator cend = a.end();
+	std::vector<int>::iterator begin = a.begin();
+	std::vector<int>::iterator end = a.end();
+	std::vector<int>::iterator cbegin = a.begin();
+	std::vector<int>::iterator cend = a.end();
 	b.assign(begin, end);
 	b.assign(cbegin, cend);
 	print_vector(b);
-	ft::vector<int> c;
-	ft::vector<int>::iterator begin1 = c.begin();
-	ft::vector<int>::iterator end1 = c.end();
+	std::vector<int> c;
+	std::vector<int>::iterator begin1 = c.begin();
+	std::vector<int>::iterator end1 = c.end();
 	b.assign(begin1, end1);
 	print_vector(b);
 	a.assign(a.begin(), a.end());
 	print_vector(a);
-	ft::vector<int> aa;
-	ft::vector<int>::iterator begin2 = aa.begin();
-	ft::vector<int>::iterator end2 = aa.end();
+	std::vector<int> aa;
+	std::vector<int>::iterator begin2 = aa.begin();
+	std::vector<int>::iterator end2 = aa.end();
 	aa.assign(begin2, end2);
 	//with value
-	ft::vector<int> u(15, 1);
+	std::vector<int> u(15, 1);
 	print_vector(u);
 	u.assign(20, 4);
 	print_vector(u);
@@ -298,7 +320,7 @@ void test_at()
 {
 	int a_ref;
 	int a_ref2;
-	ft::vector<int> a(10, 4);
+	std::vector<int> a(10, 4);
 	try
 	{
 		a_ref = a.at(9);
@@ -309,7 +331,7 @@ void test_at()
 		std::cout << e.what() << std::endl;
 	}
 	std::cout << a_ref << std::endl;
-	ft::vector<int> myvector (10);
+	std::vector<int> myvector (10);
 
 	for (unsigned i=0; i<myvector.size(); i++)
 		myvector.at(i)=i;
@@ -322,32 +344,32 @@ void test_at()
 
 void test_back()
 {
-	ft::vector<int> a(10, 10);
+	std::vector<int> a(10, 10);
 	print_vector(a);
 	std::cout << "back = \033[38;5;57m" << a.back() << "\033[0m" <<std::endl;
 	a.push_back(99);
 	print_vector(a);
 	std::cout << "back = \033[38;5;57m" << a.back() << "\033[0m" <<std::endl;
-	const ft::vector<int> a_c(10, 99);
+	const std::vector<int> a_c(10, 99);
 	print_vector(a_c);
 	std::cout << "back = \033[38;5;57m" << a_c.back() << "\033[0m" <<std::endl;
 }
 
 void test_erase()
 {
-	ft::vector<int> a;
+	std::vector<int> a;
 	for (int i = 0; i < 10; i++)
 		a.push_back(i);
-	//std::cout << &a[0] << std::endl;
+//	std::cout << &a[0] << std::endl;
 	print_vector(a);
 	a.erase(a.begin() + 1);
-	//std::cout << &a[0] << std::endl;
+//	std::cout << &a[0] << std::endl;
 	print_vector(a);
 	a.erase(a.end() - 1);
-	//std::cout << &a[0] << std::endl;
+//	std::cout << &a[0] << std::endl;
 	print_vector(a);
 	a.erase(a.begin() + 3);
-	//std::cout << &a[0] << std::endl;
+//	std::cout << &a[0] << std::endl;
 	print_vector(a);
 	a.erase(a.begin());
 	print_vector(a);
@@ -370,11 +392,21 @@ void test_erase()
 	print_vector(a);
 	a.erase(a.end() - 40, a.end() - 1);
 	print_vector(a);
+
+	std::vector<class B> b;
+	B j;
+	b.reserve(20);
+	b.push_back(j);
+	B i;
+	b.push_back(i);
+	print_vector(b);
+	b.erase(b.begin() + 2);
+	print_vector(b);
 }
 
 void test_front()
 {
-	ft::vector<int> a;
+	std::vector<int> a;
 	a.push_back(1);
 	std::cout << a.front() << std::endl;
 	a.front() += 10;
@@ -387,7 +419,7 @@ void test_front()
 
 void test_get_allocator()
 {
-	ft::vector<int> myvector;
+	std::vector<int> myvector;
 	int * p;
 	unsigned int i;
 
@@ -407,7 +439,7 @@ void test_get_allocator()
 
 void test_pop_back()
 {
-	ft::vector<int> myvector;
+	std::vector<int> myvector;
 	int sum (0);
 	myvector.push_back (100);
 	myvector.push_back (200);
@@ -423,7 +455,7 @@ void test_pop_back()
 }
 
 void test_insert() {
-	ft::vector<int> myvector(5, 10);
+	std::vector<int> myvector(5, 10);
 	print_vector(myvector);
 	myvector.insert(myvector.begin() + 2, 5);
 	for (int i = 0; i < 5; ++i) {
@@ -441,12 +473,12 @@ void test_insert() {
 		myvector.insert(myvector.begin() + 2, 5, 90);
 	}
 	print_vector(myvector);
-	ft::vector<int> from(5, 60);
+	std::vector<int> from(5, 60);
 	for (int i = 0; i < 10000; ++i) {
 		myvector.insert(myvector.end(), from.begin(), from.end() - 1);
 	}
 	print_vector(myvector);
-	ft::vector<int> a;
+	std::vector<int> a;
 	a.push_back(1);
 	a.push_back(2);
 	a.push_back(3);
@@ -454,22 +486,22 @@ void test_insert() {
 	a.insert(a.end(), a.begin(), a.end());
 	print_vector(a);
 
-	ft::vector<int> empty;
+	std::vector<int> empty;
 	print_vector(empty);
 	empty.insert(empty.begin(), 5);
 	print_vector(empty);
-	ft::vector<int> empty2;
+	std::vector<int> empty2;
 	print_vector(empty2);
 	empty2.insert(empty2.begin(), 5, 10);
 	print_vector(empty2);
-	ft::vector<int> empty3;
+	std::vector<int> empty3;
 	print_vector(empty3);
 	empty3.insert(empty3.begin(), from.begin(), from.end() - 1);
 	print_vector(empty3);
 }
 
 void test_resize() {
-	ft::vector<int> myvector(100,100);
+	std::vector<int> myvector(100,100);
 	print_vector(myvector);
 	myvector.resize(1000, 5);
 	print_vector(myvector);
@@ -496,7 +528,7 @@ void test_resize() {
 }
 
 void test_reserve() {
-	ft::vector<int> myvector(100, 100);
+	std::vector<int> myvector(100, 100);
 	print_vector(myvector);
 	for (int i = 0; i < 10000; ++i) {
 		myvector.reserve(i);
@@ -510,8 +542,8 @@ void test_reserve() {
 
 void test_insert3()
 {
-	ft::vector<int> a(100, 1);
-	ft::vector<int> b(100);
+	std::vector<int> a(100, 1);
+	std::vector<int> b(100);
 	b.push_back(1);
 	b.push_back(2);
 	b.push_back(3);
@@ -524,14 +556,14 @@ void test_insert3()
 	print_vector(a);
 	a.reserve(100);
 	print_vector(a);
-	ft::vector<int> million(1000000, 10);
+	std::vector<int> million(1000000, 10);
 	a.insert(a.end(), million.begin(), million.end() - 1000);
 	print_vector(a);
 	a.erase(a.begin(), a.end());
 	print_vector(a);
 	a.insert(a.begin(), million.end() - 1000, million.end());
 	print_vector(a);
-	ft::vector<int> one_thousand;
+	std::vector<int> one_thousand;
 	for (int i = 0; i < 1000; i++)
 		one_thousand.push_back(i);
 	for (int i = 0; i < 1000; i++)
@@ -540,14 +572,14 @@ void test_insert3()
 	a.insert(a.end(), a.begin(), a.end());
 	std::cout << *(a.begin()) << " " << *(a.end()); ////////////////////////////////
 	print_vector(a);
-	ft::vector<int> test;
+	std::vector<int> test;
 	for (int i = 0; i < 500; i++)
 	test.push_back(i);
 	print_vector(a);
 	test.insert(test.begin() + 10, test.begin(), test.end());
 	print_vector(a);
-	ft::vector<int> myvector(100, 100);
-	ft::vector<int> from(5, 60);
+	std::vector<int> myvector(100, 100);
+	std::vector<int> from(5, 60);
 	for (int i = 0; i < 100; ++i) {
 	myvector.insert(myvector.end(), from.begin(), from.end() - 1);
 	}
@@ -556,9 +588,9 @@ void test_insert3()
 
 void test_compare()
 {
-	ft::vector<int> a;
-	ft::vector<int> b;
-	ft::vector<int> c;
+	std::vector<int> a;
+	std::vector<int> b;
+	std::vector<int> c;
 
 	a.push_back(1);
 	a.push_back(2);
@@ -598,8 +630,8 @@ void test_compare()
 }
 
 void test_swap() {
-	ft::vector<int> foo (3,100);
-	ft::vector<int> bar (5,200);
+	std::vector<int> foo (3,100);
+	std::vector<int> bar (5,200);
 
 	foo.swap(bar);
 
@@ -613,26 +645,29 @@ void test_swap() {
 		std::cout << ' ' << bar[i];
 	std::cout << std::endl;
 
+	std::vector<class B> b(5);
+	std::vector<class B> c(6);
+	b.swap(c);
 }
 
 int main()
 {
-	test_reverse_iterators();
-	test_compare();
-	test_insert3();
-	test_reserve();
-	test_resize();
-	test_iterators();
-	test_clear();
-	test_million_push_back();
-	test_push_back();
-	test_assign();
-	test_at();
-	test_back();
+	//test_reverse_iterators();
+	//test_compare();
+	//test_insert3();
+	//test_reserve();
+	//test_resize();
+	//test_iterators();
+	//test_clear();
+	//test_million_push_back();
+	//test_push_back();
+	//test_assign();
+	//test_at();
+	//test_back();
 	test_erase();
-	test_front();
-	test_get_allocator();
-	test_pop_back();
-	test_insert();
-	test_swap();
+	//test_front();
+	//test_get_allocator();
+	//test_pop_back();
+	//test_insert();
+	//test_swap();
 }

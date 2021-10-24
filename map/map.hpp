@@ -1,7 +1,7 @@
 #ifndef FT_CONTAINERS_MAP_HPP
 #define FT_CONTAINERS_MAP_HPP
-#include <iostream>
 
+#include <iostream>
 #include "rbtree.hpp"
 #include "get_first.hpp"
 
@@ -67,7 +67,7 @@ namespace ft {
             _tree = other._tree;
         }
 		mapped_type& operator[] (const key_type& k) {
-            iterator i = find(k);
+            iterator i = lower_bound(k);
             if (i == end() || key_comp()(k, (*i).first))
                 i = insert(i, value_type(k, mapped_type()));
             return (*i).second;
@@ -156,7 +156,7 @@ namespace ft {
 			return _tree.size();
 		}
 		void swap(map& x) {
-            _tree.swap(x);
+			_tree.swap(x._tree);
         }
 		iterator upper_bound(const key_type& k) {
 			return _tree.upper_bound(k);

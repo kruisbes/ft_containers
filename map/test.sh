@@ -17,6 +17,7 @@ then
 	if grep "ft::map" ./main.cpp > /dev/null
 	then
 	  sed -i '' "s/ft::pair/std::pair/g" ./main.cpp
+
 		sed -i '' " s/ft::map/std::map/g" ./main.cpp
 		echo "\033[38;5;224;1mft has been successfully replaced with std\033[0m"
 	else

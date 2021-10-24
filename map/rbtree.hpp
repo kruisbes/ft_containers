@@ -322,7 +322,7 @@ namespace ft {
 					x = y->left;
 				else {
 					y = y->right;
-					while (y->left != 0)
+					while (y->left)
 						y = y->left;
 					x = y->right;
 				}
@@ -360,7 +360,8 @@ namespace ft {
 					y->parent->left = x;
 					y->right = z->right;
 					z->right->parent = y;
-				} else
+				}
+				else
 					xp = y;
 				if (_root.parent == z)
 					_root.parent = y;
@@ -382,13 +383,13 @@ namespace ft {
 							_leftRotation(xp);
 							w = xp->right;
 						}
-						if ((w->left == 0 || w->left->clr == black) && (w->right == 0 || w->right->clr == black)) {
+						if ((w->left == NULL || w->left->clr == black) && (w->right == NULL || w->right->clr == black)) {
 							w->clr = red;
 							x = xp;
 							xp = xp->parent;
 						}
 						else {
-							if (w->right == 0 || w->right->clr == black) {
+							if (w->right == NULL || w->right->clr == black) {
 								w->left->clr = black;
 								w->clr = red;
 								_rightRotation(w);
@@ -410,13 +411,13 @@ namespace ft {
 							_rightRotation(xp);
 							w = xp->left;
 						}
-						if ((w->right == 0 || w->right->clr == black) && (w->left == 0 || w->left->clr == black)) {
+						if ((w->right == NULL || w->right->clr == black) && (w->left == NULL || w->left->clr == black)) {
 							w->clr = red;
 							x = xp;
 							xp = xp->parent;
 						}
 						else {
-							if (w->left == 0 || w->left->clr == black) {
+							if (w->left == NULL || w->left->clr == black) {
 								w->right->clr = black;
 								w->clr = red;
 								_leftRotation(w);
@@ -434,13 +435,16 @@ namespace ft {
 				if (x)
 					x->clr = black;
 			}
-//			_allocator.destroy(&y->val);
-//			_nodeAlloc.deallocate(y, 1);
+			_allocator.destroy(&y->val);
+			_nodeAlloc.deallocate(y, 1);
 			_size--;
         }
 		void erase(iterator first, iterator last) {
-            while (first != last)
-                erase(first++);
+			if (first == begin() && last == end())
+				clear();
+            while (first != last) {
+				erase(first++);
+			}
         }
 		size_type erase(const key_type & key) {
             iterator del = find(key);
@@ -449,55 +453,19 @@ namespace ft {
         }
 		ft::pair<iterator, iterator> equal_range(const key_type& k) {
 			return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
-//			rb_node x = _root.parent;
-//			rb_node y = &_root;
-//			while (x != 0) {
-//				if (_comp(KeyOfValue()(x->val), k))
-//					x = x->right;
-//				else if (_comp(k, KeyOfValue()(x->val))) {
-//					y = x;
-//					x = x->left;
-//				}
-//				else {
-//					rb_node xu(x);
-//					rb_node yu(y);
-//					y = x;
-//					x = x->left;
-//					xu = xu->right;
-//					return ft::pair<iterator, iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
-//				}
-//			}
-//			return ft::pair<iterator, iterator>(iterator(y), iterator(y));
 		}
 		ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
 			return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
-//			const_rb_node x = _root.parent;
-//			const_rb_node y = &_root;
-//			while (x != 0) {
-//				if (_comp(KeyOfValue()(x->val), k))
-//					x = x->right;
-//				else if (_comp(k, KeyOfValue()(x->val))) {
-//					y = x;
-//					x = x->left;
-//				}
-//				else {
-//					const_rb_node xu(x);
-//					const_rb_node yu(y);
-//					y = x;
-//					x = x->left;
-//					xu = xu->right;
-//					return ft::pair<const_iterator, const_iterator>(_low_help(x, y, k), _up_help(xu, yu, k));
-//				}
-//			}
-//			return ft::pair<const_iterator, const_iterator>(const_iterator(y), const_iterator(y));
 		}
 		iterator find(const key_type& key) {
 			iterator j = lower_bound(key);
-			return (j == end() || _comp(key, KeyOfValue()(j.node->val))? end() : j);
+			iterator a = end();
+			std::cout << a.node->val.first << std::endl;
+			return (j == end() || _comp(key, KeyOfValue()(j.node->val))) ? end() : j;
 		}
 		const_iterator find(const key_type& key) const {
 			const_iterator j = lower_bound(key);
-			return (j == end() || _comp(key, KeyOfValue()(j.node->val)) ? end() : j);
+			return (j == end() || _comp(key, KeyOfValue()(j.node->val))) ? end() : j;
 		}
 		allocator_type get_allocator() {
 			return _allocator;
@@ -608,33 +576,36 @@ namespace ft {
 			return _size;
 		}
         void swap(rbTree& sw) {
-            if (_root == 0) {
-                if (sw._root != 0) {
-                    _root.parent = sw._root.parent;
-                    _root.left = sw._root.left;
-                    _root.right = sw._root.right;
-                    _root.parent->parent = &_root;
-                    sw._root.parent = 0;
-                    sw._root.left = 0;
-                    sw._root.right = 0;
-                }
-                else if (_root.parent == 0) {
-                    sw._root.parent = _root.parent;
-                    sw._root.right = _root.right;
-                    sw._root.left = _root.left;
-                    sw._root.parent->parent = &sw._root;
-                }
-                else {
-                    std::swap(_root.parent, sw._root.parent);
-                    std::swap(_root.left, sw._root.left);
-                    std::swap(_root.right, sw._root.right);
-                    _root.parent->parent = &_root;
-                    sw._root.parent = &_root;
-                    sw._root.parent = &sw._root;
-                }
+            if (_root.parent == 0)
+			{
+				if (sw._root.parent != 0)
+				{
+					_root.parent = sw._root.parent;
+					_root.left = sw._root.left;
+					_root.right = sw._root.right;
+					_root.parent->parent = &_root;
+					sw._root.parent = 0;
+					sw._root.left = &sw._root;
+					sw._root.right = &sw._root;
+				}
+			} else if (_root.parent == 0) {
+				sw._root.parent = _root.parent;
+				sw._root.right = _root.right;
+				sw._root.left = _root.left;
+				sw._root.parent->parent = &sw._root;
+
+				_root.parent = 0;
+				_root.left = &_root;
+				_root.right = &_root;
+			} else {
+				std::swap(_root.parent, sw._root.parent);
+				std::swap(_root.left, sw._root.left);
+				std::swap(_root.right, sw._root.right);
+				_root.parent->parent = &_root;
+				sw._root.parent->parent = &sw._root;
+			}
                 std::swap(_size, sw._size);
                 std::swap(_comp, sw._comp);
-            }
         }
 		iterator upper_bound(const key_type& k) {
 			rb_node x = _root.parent;

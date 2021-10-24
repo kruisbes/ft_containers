@@ -1,6 +1,6 @@
 #include "map.hpp"
+#include "../vector/vector.hpp"
 #include <map>
-#include <random>
 
 template <class T1, class T2>
 void print_map(ft::map<T1, T2> &v)
@@ -39,15 +39,6 @@ void map_test_construct() {
 	std::cout << (one == two) << std::endl;
 }
 
-void map_test_it() {
-	ft::map<std::string, int> a;
-	ft::map<std::string, int>::iterator it;
-	a["beta"] = 100;
-	a["alpha"] = 200;
-	a["gamma"] = 300;
-	print_map(a);
-}
-
 void map_test_insert() {
 	ft::map<int, int> a;
 	a.insert(ft::pair<int, int>(0, 100));
@@ -61,7 +52,12 @@ void map_test_insert() {
 	a.insert(a.begin(), ft::pair<int, int>(3, 400));
 	for (int i = 11; i < 1000; ++i)
 		a.insert(ft::pair<int, int>(i, i));
-//	print_map(a);
+	print_map(a);
+
+	ft::map<int, int> b;
+	ft::vector<ft::pair<int, int> > vec(100, ft::pair<int, int>(10, 10));
+	b.insert(vec.begin(), vec.end());
+	print_map(b);
 }
 
 void map_test_equal_range() {
@@ -117,7 +113,9 @@ void map_test_uplow() {
 	a.erase(itlow,itup);
 	print_map(a);
 	itlow = a.lower_bound ('a');
-	itup = a.upper_bound ('e');
+	itup = a.lower_bound('e');
+	std::cout << itlow->first << " " << itlow->second << std::endl;
+	std::cout << itup->first << " " << itup->second << std::endl;
 	a.erase(itlow,itup);
 	print_map(a);
 }
@@ -248,33 +246,141 @@ void map_test_erase() {
 		a.erase(i);
 	}
 	print_map(a);
-//	a[0] = 1;
-//	a[1] = 2;
-//	a[2] = 3;
-//	a[3] = 4;
-//	a.erase(1);
-//	print_map(a);
-//	unsigned int seed = 1;
-//	std::default_random_engine gen(seed);
-//	std::uniform_int_distribution<int> dist(1, 1000000);
-//	for (int i = 0; i < 1000; ++i)
-//		a.insert(ft::pair<int, int>(dist(gen), 15));
-//	for (int i = 0; i < 100; ++i)
-//		a.erase(dist(gen));
-//	print_map(a);
+	a.clear();
+	print_map(a);
+	for (int i = 0; i < 1000; ++i) {
+		a.insert(ft::pair<int, int>(i, i));
+	}
+	for (int i = 0; i < 50; ++i) {
+		a.erase(i);
+	}
+	print_map(a);
+	a.clear();
+	print_map(a);
+	for (int i = 0; i < 1000; ++i) {
+		a.insert(ft::pair<int, int>(i, i));
+	}
+	for (int i = 100; i > 50; i--) {
+		a.erase(i);
+	}
+	print_map(a);
+	a.clear();
+	print_map(a);
+	for (int i = 0; i < 10000; ++i) {
+		a.insert(ft::pair<int, int>(i, i));
+	}
+	print_map(a);
+	ft::map<int, int>::iterator it;
+	it = a.begin();
+	for (int i = 0; i < 10; ++i, it++) ;
+	std::cout << it->first << " " << it->second << std::endl;
+	a.erase(it);
+	print_map(a);
+	it = a.begin();
+	for (int i = 0; i < 20; ++i, it++) ;
+	std::cout << it->first << " " << it->second << std::endl;
+	a.erase(it);
+	print_map(a);
+	it = a.begin();
+	for (int i = 0; i < 256; ++i, it++) ;
+	a.erase(it);
+	print_map(a);
+	it = a.begin();
+	ft::map<int, int>::iterator itt = a.begin();
+	for (int i = 0; i < 50; ++i, it++, itt++) ;
+	for (int i = 0; i < 50; ++i, itt++) ;
+	std::cout << it->first << " " << it->second << std::endl;
+	std::cout << itt->first << " " << itt->second << std::endl;
+	std::cout << a.size() << std::endl;
+	a.erase(it, itt);
+	std::cout << a.size() << std::endl;
+	print_map(a);
 }
 
+void map_simple_test() {
+	ft::map<int, int> a;
+	std::cout << a.empty() << std::endl;
+	for (int i = 0; i < 1000; ++i) {
+		a.insert(ft::pair<int, int>(i, i));
+	}
+	std::cout << a.empty() << std::endl;
+	std::cout << a.size() << std::endl;
+}
+
+void map_test_compare() {
+	ft::map<int, int> a;
+	for (int i = 0; i < 100; ++i)
+		a.insert(ft::pair<int, int>(i, i));
+	ft::map<int, int> c(a);
+	ft::map<int, int> b;
+	for (int i = 0; i < 5; ++i) {
+		b.insert(ft::pair<int, int>(i, i));
+	}
+
+	// Compare non equal containers
+	std::cout << "a == b returns " << (a == b) << std::endl;
+	std::cout << "a != b returns " << (a != b) << std::endl;
+	std::cout << "a < b returns " << (a < b) << std::endl;
+	std::cout << "a <= b returns " << (a <= b) << std::endl;
+	std::cout << "a > b returns " << (a > b) << std::endl;
+	std::cout << "a >= b returns " << (a >= b) << std::endl;
+
+	std::cout << std::endl;
+
+	// Compare equal containers
+	std::cout << "a == c returns " << (a == c) << std::endl;
+	std::cout << "a != c returns " << (a != c) << std::endl;
+	std::cout << "a < c returns " << (a < c) << std::endl;
+	std::cout << "a <= c returns " << (a <= c) << std::endl;
+	std::cout << "a > c returns " << (a > c) << std::endl;
+	std::cout << "a >= c returns " << (a >= c) << std::endl;
+}
+
+void map_test_swap() {
+	ft::map<char,int> foo,bar;
+
+	foo['x']=100;
+	foo['y']=200;
+
+	bar['a']=11;
+	bar['b']=22;
+	bar['c']=33;
+
+	foo.swap(bar);
+
+	std::cout << "foo contains:\n";
+	for (ft::map<char,int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+		std::cout << it->first << " => " << it->second << std::endl;
+
+	std::cout << "bar contains:\n";
+	for (ft::map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
+		std::cout << it->first << " => " << it->second << std::endl;
+}
+
+void map_test_find() {
+	ft::map<int, int> a;
+	for (int i = 0; i < 100; ++i) {
+		a.insert(ft::pair<int, int>(i, i));
+	}
+	ft::map<int, int>::iterator it;
+	it = a.find(23);
+	std::cout << it->first << " " << it->second << std::endl;
+	it = a.find(120);
+	std::cout << it->first << " " << it->second << std::endl;
+}
 
 int main() {
-
+//	map_simple_test();
 //	map_test_reverse_iterators();
 //	map_test_construct();
 //	map_test_iterators();
-//	map_test_it();
 //	map_test_insert();
 //	map_test_equal_range();
 //	map_test_uplow();
 //	map_test_clear();
 //	map_test_count();
-	map_test_erase();
+//	map_test_erase();
+//	map_test_compare();
+//	map_test_swap();
+	map_test_find();
 }

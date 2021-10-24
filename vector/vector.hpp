@@ -158,8 +158,9 @@ namespace ft {
 			}
 			size_type pos = std::distance(begin(), position);
 			_allocator.destroy(_vec + pos);
-			for (size_type i = pos; i < _size; ++i) {
+			for (size_type i = pos; i < _size - 1; ++i) {
 				_allocator.construct(_vec + i, *(_vec + i + 1));
+				_allocator.destroy(_vec + i + 1);
 			}
 			_size--;
 			return position;
@@ -187,6 +188,8 @@ namespace ft {
 			return _allocator;
 		}
         iterator insert (iterator position, const value_type & val) {
+			if (position < begin() || (_capacity ==  0 && position != begin()))
+				throw std::out_of_range("out of range 🤡");
             size_type pos = std::distance(begin(), position);
             if (_size == _capacity) {
                 _capacity = (_capacity == 0) ? 1 : _capacity * 2;
@@ -211,6 +214,8 @@ namespace ft {
             return position;
         }
         void insert(iterator position, size_type n, const value_type & val) {
+			if (position < begin() || (_capacity ==  0 && position != begin()))
+				throw std::out_of_range("out of range 🤡");
             size_type pos = std::distance(begin(), position);
             if (_size + n > _capacity) {
                 size_type temp_cap = _capacity;
@@ -257,6 +262,8 @@ namespace ft {
         void insert(InputIterator position,
                     typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type first,
                     typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) {
+			if (position < begin() || (_capacity ==  0 && position != begin()))
+				throw std::out_of_range("out of range 🤡");
             if (std::distance(first, last) < 0)
                 throw (std::length_error("vector: range insert"));
             size_type pos = std::distance(begin(), position);
@@ -308,9 +315,9 @@ namespace ft {
 		vector & operator=(const vector & other) {
 			if (_vec != 0)
 				clear();
-			if (this != other) {
+			if (*this != other) {
 				_allocator = other._allocator;
-				_allocator.deallocate(_capacity);
+				_allocator.deallocate(_vec, _capacity);
 				_capacity = other._capacity;
 				_size = other._size;
 				_vec = _allocator.allocate(_capacity);
@@ -336,7 +343,7 @@ namespace ft {
 			}
 			if (_size > _capacity) {
 				pointer temp_arr = _allocator.allocate(_size);
-				for (size_type i = 0; i < _size; i++) {
+				for (size_type i = 0; i < _size - 1; i++) {
 					_allocator.construct(temp_arr + i, *(_vec + i));
 					_allocator.destroy(_vec + i);
 				}
