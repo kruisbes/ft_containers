@@ -163,7 +163,7 @@ namespace ft {
 				_allocator.destroy(_vec + i + 1);
 			}
 			_size--;
-			return position;
+			return begin() + pos;
 		}
 		iterator erase(iterator first, iterator last) {
 			size_type posf = std::distance(begin(), first);
@@ -176,7 +176,7 @@ namespace ft {
 			for (size_type i = posl; i < len; ++i) {
 				_allocator.construct(_vec + posf++, *(_vec + i));
 			}
-			return _vec;
+			return begin() + posl;
 		}
 		reference front() {
 			return (*begin());
@@ -211,7 +211,7 @@ namespace ft {
                 _allocator.construct(_vec + pos, val);
                 _size++;
             }
-            return position;
+            return begin() + pos;
         }
         void insert(iterator position, size_type n, const value_type & val) {
 			if (position < begin() || (_capacity ==  0 && position != begin()))

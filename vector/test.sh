@@ -16,10 +16,10 @@ if [ 'bzz' = "$1" ]
 then
 	if grep "ft::vector" ./main.cpp > /dev/null
 	then
-		sed -i '' " s/ft::vector/std::vector/g" ./main.cpp
+		sed -i "s/ft::vector/std::vector/g" ./main.cpp
 		echo "\033[38;5;224;1mft has been successfully replaced with std\033[0m"
 	else
-		sed -i '' "s/std::vector/ft::vector/g" ./main.cpp
+		sed -i "s/std::vector/ft::vector/g" ./main.cpp
 		echo "\033[38;5;224;1mstd has been successfully replaced with ft\033[0m"
 	fi
 	return
@@ -30,17 +30,17 @@ if grep "ft::vector" ./main.cpp > /dev/null
 then
 	clang++ -Wall -Wextra -Werror main.cpp -o ft_vector -Ofast
 	time ./ft_vector > ft_output
-	sed -i '' "s/ft::vector/std::vector/g" ./main.cpp
+	sed -i "s/ft::vector/std::vector/g" ./main.cpp
 	clang++ -Wall -Wextra -Werror main.cpp -o std_vector -Ofast
 	time ./std_vector > std_output
-	sed -i '' "s/std::vector/ft::vector/g" ./main.cpp
+	sed -i  "s/std::vector/ft::vector/g" ./main.cpp
 else
 	clang++ -Wall -Wextra -Werror main.cpp -o std_vector -Ofast
 	time ./std_vector > std_output
-	sed -i '' "s/std::vector/ft::vector/g" ./main.cpp
+	sed -i  "s/std::vector/ft::vector/g" ./main.cpp
 	clang++ -Wall -Wextra -Werror main.cpp -o ft_vector -Ofast
 	time ./ft_vector > ft_output
-	sed -i '' "s/ft::vector/std::vector/g" ./main.cpp
+	sed -i  "s/ft::vector/std::vector/g" ./main.cpp
 fi
 
 if diff -E ft_output std_output

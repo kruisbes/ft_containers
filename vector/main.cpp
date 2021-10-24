@@ -44,7 +44,6 @@ public:
 		return *this;
 	}
 	~B() {
-		std::cout << "AAA" << std::endl;
 		delete[] hehe;
 	}
 };
@@ -393,7 +392,7 @@ void test_erase()
 	a.erase(a.end() - 40, a.end() - 1);
 	print_vector(a);
 
-	std::vector<class B> b;
+/*	std::vector<class B> b;
 	B j;
 	b.reserve(20);
 	b.push_back(j);
@@ -401,7 +400,16 @@ void test_erase()
 	b.push_back(i);
 	print_vector(b);
 	b.erase(b.begin() + 2);
-	print_vector(b);
+	print_vector(b); */
+
+	std::vector<int> test(100, 100);
+	std::vector<int>::iterator i;
+	i = test.erase(test.begin() + 10);
+	std::cout << "iteraror points to: ";
+	std::cout << *i << std::endl;
+	i = test.erase(test.begin() + 10, test.begin() + 20);
+	std::cout << "iterator points to: ";
+	std::cout << *i << std::endl;
 }
 
 void test_front()
@@ -498,6 +506,12 @@ void test_insert() {
 	print_vector(empty3);
 	empty3.insert(empty3.begin(), from.begin(), from.end() - 1);
 	print_vector(empty3);
+
+	std::vector<int> test_it(100,100);
+	std::vector<int>::iterator retit;
+	retit = test_it.insert(test_it.begin() + 10, 77);
+	std::cout << "iterator points to: ";
+	std::cout << *retit << std::endl;
 }
 
 void test_resize() {
@@ -652,22 +666,22 @@ void test_swap() {
 
 int main()
 {
-	//test_reverse_iterators();
-	//test_compare();
-	//test_insert3();
-	//test_reserve();
-	//test_resize();
-	//test_iterators();
-	//test_clear();
-	//test_million_push_back();
-	//test_push_back();
-	//test_assign();
-	//test_at();
-	//test_back();
+	test_reverse_iterators();
+	test_compare();
+	test_insert3();
+	test_reserve();
+	test_resize();
+	test_iterators();
+	test_clear();
+	test_million_push_back();
+	test_push_back();
+	test_assign();
+	test_at();
+	test_back();
 	test_erase();
-	//test_front();
-	//test_get_allocator();
-	//test_pop_back();
-	//test_insert();
-	//test_swap();
+	test_front();
+	test_get_allocator();
+	test_pop_back();
+	test_insert();
+	test_swap();
 }
