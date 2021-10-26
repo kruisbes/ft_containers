@@ -2,7 +2,7 @@
 #define SET_HPP
 
 #include <iostream>
-#include "../map/rbtree.hpp"
+#include "../tree/rbtree.hpp"
 
 namespace ft {
 	template <typename T>
@@ -10,12 +10,12 @@ namespace ft {
 		T& operator()(T& value) {
 			return value;
 		}
-		const T& operator(const T& value) const {
+		const T& operator()(const T& value) const {
 			return value;
 		}
 	};
 
-	template <class T, class Compare = std::less<Key>, class Allocator = std::allocator<T> >
+	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
 	class set {
 	public:
 
@@ -27,11 +27,15 @@ namespace ft {
 		typedef Compare								key_compare;
 		typedef Compare								value_compare;
 		typedef Allocator							allocator_type;
-		typedef rbTree<key_type, value_type, ft::ret_value<value_type>, key_compare, allocator_type> tree;
 		typedef typename Allocator::reference						reference;
 		typedef typename Allocator::const_reference					const_reference;
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
+	private:
+		typedef rbTree<key_type, value_type, ft::ret_value<value_type>, key_compare, allocator_type> tree;
+		tree _tree;
+		allocator_type _allocator;
+	public:
 		typedef typename tree::iterator iterator;
 		typedef typename tree::const_iterator const_iterator;
 		typedef typename tree::reverse_iterator reverse_iterator;
@@ -153,10 +157,6 @@ namespace ft {
 		friend bool operator==(const set<T1, Comp, Alloc>& x, const set<T1, Comp, Alloc>& y);
 		template<typename T1, typename Comp, typename Alloc>
 		friend bool operator<(const set<T1, Comp, Alloc>& x, const set<T1, Comp, Alloc>& y);
-
-	private:
-		tree _tree;
-		allocator_type _allocator;
 	};
 
 	template<typename T1, typename Comp, typename Alloc>

@@ -32,10 +32,12 @@ namespace ft {
 
 		// CONSTRUCTOR + DESTRUCTOR
 
-        explicit stack(const Container & cont = Container()) : c(cont) {}
-        ~stack() {}
+		stack() : c() {}
+		explicit stack(const Container & cont) : c(cont) {}
+        ~stack() {
+		}
         stack & operator=(const stack & other) {
-            this->c = other.c;
+			this->c = other.c;
             return *this;
         }
 

@@ -2,7 +2,7 @@
 #define FT_CONTAINERS_MAP_HPP
 
 #include <iostream>
-#include "rbtree.hpp"
+#include "../tree/rbtree.hpp"
 #include "get_first.hpp"
 
 namespace ft {
@@ -11,6 +11,7 @@ namespace ft {
 	public:
 
 		// DEF
+
 		typedef Key									key_type;
 		typedef T									mapped_type;
 		typedef ft::pair<const Key, T>				value_type;
@@ -18,11 +19,15 @@ namespace ft {
 		typedef std::ptrdiff_t						difference_type;
 		typedef Compare								key_compare;
 		typedef Allocator							allocator_type;
-		typedef rbTree<key_type, value_type, ft::get_first<value_type>, key_compare, allocator_type> tree;
 		typedef value_type&							reference;
 		typedef const value_type&					const_reference;
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
+	private:
+		typedef rbTree<key_type, value_type, ft::get_first<value_type>, key_compare, allocator_type> tree;
+		tree _tree;
+		allocator_type _allocator;
+	public:
 		typedef typename tree::iterator iterator;
 		typedef typename tree::const_iterator const_iterator;
 		typedef typename tree::reverse_iterator reverse_iterator;
@@ -171,10 +176,6 @@ namespace ft {
         friend bool operator==(const map<K, T1, Comp, Alloc>& x, const map<K, T1, Comp, Alloc>& y);
         template<typename K, typename T1, typename Comp, typename Alloc>
         friend bool operator<(const map<K, T1, Comp, Alloc>& x, const map<K, T1, Comp, Alloc>& y);
-
-    private:
-		tree _tree;
-		allocator_type _allocator;
 	};
 
     template<typename K, typename T1, typename Comp, typename Alloc>

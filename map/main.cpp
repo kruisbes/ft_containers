@@ -369,18 +369,63 @@ void map_test_find() {
 	std::cout << it->first << " " << it->second << std::endl;
 }
 
+void map_test_element_access()
+{
+	ft::map<int, int> map;
+	print_map(map);
+	map[0] = 0;
+	print_map(map);
+	for (int i = 0; i < 100; i++)
+		map[i] = i;
+	print_map(map);
+	for (int i = 0; i < 50; i++)
+		std::cout << map[i] << " ";
+	std::cout << std::endl;
+}
+
+void map_test_comp() {
+	{
+		ft::map<char,int> mymap;
+		ft::map<char,int>::key_compare mycomp = mymap.key_comp();
+		mymap['a']=100;
+		mymap['b']=200;
+		mymap['c']=300;
+		std::cout << "mymap contains:\n";
+		char highest = mymap.rbegin()->first;
+		ft::map<char,int>::iterator it = mymap.begin();
+		do {
+			std::cout << it->first << " => " << it->second << '\n';
+		} while ( mycomp((*it++).first, highest) );
+		std::cout << '\n';
+	}
+	{
+		ft::map<char,int> mymap;
+		mymap['x']=1001;
+		mymap['y']=2002;
+		mymap['z']=3003;
+		std::cout << "mymap contains:\n";
+		ft::pair<char,int> highest = *mymap.rbegin();
+		ft::map<char,int>::iterator it = mymap.begin();
+		do {
+			std::cout << it->first << " => " << it->second << '\n';
+		} while ( mymap.value_comp()(*it++, highest) );
+	}
+}
+
 int main() {
-//	map_simple_test();
-//	map_test_reverse_iterators();
-//	map_test_construct();
-//	map_test_iterators();
-//	map_test_insert();
-//	map_test_equal_range();
-//	map_test_uplow();
-//	map_test_clear();
-//	map_test_count();
-//	map_test_erase();
-//	map_test_compare();
-//	map_test_swap();
+	map_simple_test();
+	map_test_reverse_iterators();
+	map_test_construct();
+	map_test_iterators();
+	map_test_insert();
+	map_test_equal_range();
+	map_test_uplow();
+	map_test_clear();
+	map_test_count();
+	map_test_erase();
+	map_test_compare();
+	map_test_swap();
 	map_test_find();
+	map_test_element_access();
+	map_test_comp();
 }

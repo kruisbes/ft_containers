@@ -160,7 +160,6 @@ namespace ft {
 			_allocator.destroy(_vec + pos);
 			for (size_type i = pos; i < _size - 1; ++i) {
 				_allocator.construct(_vec + i, *(_vec + i + 1));
-				_allocator.destroy(_vec + i + 1);
 			}
 			_size--;
 			return begin() + pos;

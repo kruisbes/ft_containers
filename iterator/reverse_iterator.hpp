@@ -32,7 +32,7 @@ namespace ft {
 			return *--tmp;
 		}
 		pointer operator->() const {
-			return --_it;
+			return &(operator*());
 		}
 		reference operator[](difference_type n) const {
 			return *(*this + n);
